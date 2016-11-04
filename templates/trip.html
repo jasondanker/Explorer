@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<body class="trips">
+  <div>
+    <section>
+    <div class="homelink">
+      <a href="{{ url_for('index') }}">Home</a>
+    </div>
+    <div class="logout">
+      <a href="{{ url_for('logout') }}"> Logout</a> 
+    </div>
+        {% if 'username' in session %}
+          <p id="welcome">Welcome {{ username }}!</p>
+        {% else %}
+          <form action="/login" method="POST">
+            <input type="username" name="username" placeholder="Username">
+            <input type="password" name="password" placeholder="Password">
+            <input type="submit" value="Log in">
+          </form>
+        {% endif %}
+    <div>
+    <div>
+    {% for item in trip %}
+      {% for element in item %}
+        {{element}}
+      {% endfor %}
+    {% endfor %}
+  </div>
+</body>
+{% endblock %}

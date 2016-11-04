@@ -1,0 +1,29 @@
+<html>
+  <head>
+    {% if title %}
+    <title>{{ title }} - TRAVEL.IO</title>
+    {% else %}
+    <title>Welcome to Travel.io!</title>
+    {% endif %}
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul class=flashes>
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/css/materialize.min.css">
+    <link rel="stylesheet" href="/static/style.css" type="text/css">
+    <script src="http://code.jquery.com/jquery-1.7.2.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/js/materialize.min.js"></script>
+          
+  </head>
+  <body>
+    {% block content %}{% endblock %}
+  </body>
+</html>
