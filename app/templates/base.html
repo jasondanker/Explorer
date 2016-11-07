@@ -1,0 +1,40 @@
+<html>
+<head>
+    {% if title %}
+    <title>{{ title }} - Explorer</title>
+    {% else %}
+    <title>Welcome to Explorer!</title>
+    {% endif %}
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul class=flashes>
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+
+    <!-- Navigation Bar -->
+    <nav>
+        <div class="nav-wrapper teal lighten-3">
+            <a class="brand-logo center title">Explorer</a>
+            <div class="nav-options">
+                {% block navcontent %}{% endblock %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Compiled and minified CSS -->
+    <link rel=stylesheet href="https://fonts.googleapis.com/css?family=PT+Sans|Amatic+SC">
+    <link rel=stylesheet href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/css/materialize.min.css">
+    <link rel=stylesheet href="/static/style.css" type="text/css">
+    <script src="http://code.jquery.com/jquery-1.7.2.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/js/materialize.min.js"></script>
+
+</head>
+<body>
+    {% block content %}{% endblock %}
+</body>
+</html>

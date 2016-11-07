@@ -6,7 +6,6 @@
     background-size: cover;
 }
 
-
 .createtrip {
     background-image: url("createtrip4.jpeg");
     -webkit-background-size: cover;
@@ -31,12 +30,13 @@
     background-size: cover;
 }
 
+/*
 input[type=submit] {
     font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
     font-weight: 400;
     margin-bottom: 20px;
     margin-top: 5px;
-    background-color: F5F5E9; 
+    background-color: F5F5E9;
     border-radius: 4px;
     border: 3px;
 }
@@ -49,8 +49,6 @@ html {
     margin: 0;
     height: 100%;
 }
-
-
 
 body {
     padding-top: 10px;
@@ -166,3 +164,5 @@ pre {
     font-weight: 400;
     line-height: 18.5714px;
 }
+
+*/

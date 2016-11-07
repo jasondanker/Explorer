@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block navcontent %}
+<a href="#!" class="brand-logo center">Explorer</a>
+<ul class="right">
+    <li><a href="#">Logout</a></li>
+</ul>
+{% endblock %}
+
+{% block content %}
+<body class="createtrip">
+    <script src="/static/createtrip.js"></script>
+
+    {% if 'username' in session %}
+    <p id="welcome">Welcome {{ username }}!</p>
+    {% else %}
+    <!-- <form action="/login" method="POST">
+        <input type="username" name="username" placeholder="Username">
+        <input type="password" name="password" placeholder="Password">
+        <input type="submit" value="Log in">
+    </form> -->
+    {% endif %}
+
+    <div class="container">
+        <br>
+        <h2>Create a Trip</h2>
+        <br>
+    </div>
+</body>
+{% endblock %}
