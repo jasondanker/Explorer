@@ -12,7 +12,7 @@ View functions:
 @myapp.route('/')
 @myapp.route('/index')
 def index():
-	return redirect('/login')
+	return redirect('/home')
 
 # login
 @myapp.route('/login', methods=['GET', 'POST'])
@@ -43,6 +43,12 @@ def createtrip():
 @myapp.route('/trips')
 def trips():
 	return render_template('trips.html')
+
+# this will display the trip information once we've completed a trip
+# @app.route('/display/<trip_id>')
+# def display_trip(trip_id):
+#     trip = models.get_trip_by_id(trip_id)
+#     return render_template('trip.html', trip=trip)
 
 # home
 @myapp.route('/home')

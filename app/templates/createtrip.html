@@ -1,30 +1,37 @@
-{% extends "base.html" %}
-
-{% block navcontent %}
-<a href="#!" class="brand-logo center">Explorer</a>
-<ul class="right">
-    <li><a href="#">Logout</a></li>
-</ul>
-{% endblock %}
-
+  {% extends "base.html" %}
 {% block content %}
-<body class="createtrip">
+  <body class="createtrip">
     <script src="/static/createtrip.js"></script>
-
-    {% if 'username' in session %}
-    <p id="welcome">Welcome {{ username }}!</p>
-    {% else %}
-    <!-- <form action="/login" method="POST">
-        <input type="username" name="username" placeholder="Username">
-        <input type="password" name="password" placeholder="Password">
-        <input type="submit" value="Log in">
-    </form> -->
-    {% endif %}
-
-    <div class="container">
-        <br>
-        <h2>Create a Trip</h2>
-        <br>
+    <section>
+   <!--  <div class="homelink">
+      <a href="{{ url_for('index') }}">Home</a>
+    </div> -->
+    <div class="logout">
+      <a href="{{ url_for('logout') }}"> Logout</a> 
     </div>
+        {% if 'username' in session %}
+          <p id="welcome">Welcome {{ username }}!</p>
+        {% else %}
+          <form action="/login" method="POST">
+            <input type="username" name="username" placeholder="Username">
+            <input type="password" name="password" placeholder="Password">
+            <input type="submit" value="Log in">
+          </form>
+        {% endif %}
+    <div>
+    <h2>Create a Trip</h2>
+    <br>
+        <p>
+          Trip Name:<br>
+        </p>
+        <p>
+          Dates:<br>
+        </p>
+        <p>
+          Budget:<br>
+        </p>
+    </div>
+      <p><input type="submit" value="Make Your Trip"></p>
+  </div>
 </body>
 {% endblock %}
