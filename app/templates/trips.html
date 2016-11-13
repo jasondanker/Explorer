@@ -1,5 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
+
+<!-- View all your trips and start a new one from here -->
+
 <body class="trips">
   <section>
     <!-- <div class="homelink">
@@ -31,10 +34,11 @@
     <table>
     <tr>
       <th>Trip Name</th>
-      <th>Destination</th>
       <th>Date</th>
       <th>Budget</th>
-      <th>Companion</th>
+      <th>Destination</th>
+      <th>Flight</th>
+      <th>Hotel</th>
     </tr>
     {% for trip in trips %}
     <tr>

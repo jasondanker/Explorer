@@ -8,6 +8,8 @@ View functions:
 * Access the models file to use SQL functions
 """
 
+# This is all dummy information
+
 # landing redirect
 @myapp.route('/')
 @myapp.route('/index')
@@ -24,12 +26,12 @@ def login():
 def locations():
 	return render_template('locations.html')
 
-# locations
+# flights
 @myapp.route('/flights')
 def flights():
 	return render_template('flights.html')
 
-# locations
+# hotels
 @myapp.route('/hotels')
 def hotels():
 	return render_template('hotels.html')
@@ -39,7 +41,7 @@ def hotels():
 def createtrip():
 	return render_template('createtrip.html')
 
-# trips
+# view your trips
 @myapp.route('/trips')
 def trips():
 	return render_template('trips.html')
@@ -50,7 +52,7 @@ def trips():
 #     trip = models.get_trip_by_id(trip_id)
 #     return render_template('trip.html', trip=trip)
 
-# home
+# homepage
 @myapp.route('/home')
 def home():
 	return render_template('home.html')
