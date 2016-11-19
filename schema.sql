@@ -1,7 +1,7 @@
 drop table if exists users;
 create table users (
 	user_id integer primary key,
-	first_name text null null,
+	first_name text not null,
 	last_name text not null,
 	email text not null unique,
 	insecure_password text not null,
@@ -11,6 +11,7 @@ create table users (
 drop table if exists trips;
 create table trips (
 	trip_id integer primary key,
+	trip_name text not null,
 	budget integer not null,
 	date_outbound date not null,
 	date_inbound date not null,
@@ -31,8 +32,9 @@ create table flights (
 	origin text not null,
 	destination text not null,
 	cost integer not null,
-	foreign key (trip_id) references trips(trip_id),
-	active boolean not null
+	trip_id integer,
+	active boolean not null,
+	foreign key (trip_id) references trips(trip_id)
 );
 
 drop table if exists hotels;
@@ -43,8 +45,9 @@ create table hotels (
 	check_out date not null,
 	location text not null, -- Likely to be expanded
 	rating integer,
-	foreign key (trip_id) references trips(trip_id),
-	active boolean not null
+	trip_id integer,
+	active boolean not null,
+	foreign key (trip_id) references trips(trip_id)
 );
 
 drop table if exists user_trips_junct;
@@ -52,7 +55,7 @@ create table user_trips_junct (
 	relation_id integer primary key,
 	user_id integer,
 	trip_id integer,
+	active boolean not null,
 	foreign key (user_id) references users(user_id),
-	foreign key (trip_id) references trips(trip_id),
-	active boolean not null
+	foreign key (trip_id) references trips(trip_id)
 );

@@ -3,7 +3,7 @@
 {% block navcontent %}
 <a href="{{ url_for('home') }}" class="brand-logo center">Explorer</a>
 <ul class="right">
-    <li><a href="#">Logout</a></li>
+  <li><a href="#">Logout</a></li>
 </ul>
 {% endblock %}
 
@@ -11,80 +11,85 @@
 
 {% block content %}
 <body class="locations">
-    <div class="container">
-        <section>
-            <div class="col s12">
-                <a href="locations" class="breadcrumb blue-text text-darken-2">Location</a> >
-                <a href="#" class="breadcrumb blue-text text-darken-2">Flights</a>
-            </div>
-        </section>
-        <h2>Pick a Flight</h2>
-
-        <div class="row">
-            <div class="col s2">Filter</div>
-            <div class="col s3">
-                <input type="checkbox" class="filled-in"/>
-                <!-- filter for direct flights -->
-                <label>Direct Flight Only</label>
-            </div>
-            <div class="col s3">
-                <!-- filter for airlines -->
-                <label>Airlines</label>
-                <select class="browser-default">
-                    <option value="" disabled selected>Choose your option</option>
-                    <option value="1">United Airlines</option>
-                    <option value="2">Delta</option>
-                    <option value="3">American Airlines</option>
-                </select>
-            </div>
-            <div class="col s3">
-                <input type="checkbox" class="filled-in"/>
-                <!-- filter for business class flights because you fancy like that -->
-                <label>Business Class</label>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col s12 m7">
-                <div class="card horizontal">
-                    <div class="card-image">
-                        <img src="http://www.pulseheadlines.com/wp-content/uploads/2015/07/airplane-flying-sky.jpg">
-                    </div>
-                    <div class="card-stacked">
-                        <div class="card-content">
-                            <!-- flight option 1 -->
-                            <p>Flight 1</p>
-                            <p>$$$</p>
-                            <p>Delta Airlines</p>
-                            <p>9 hrs 40m</p>
-                        </div>
-                        <div class="card-action">
-                            <a href="#">Select</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col s12 m7">
-                <div class="card horizontal">
-                    <div class="card-image">
-                        <img src="https://images.trvl-media.com/media/content/expus/graphics/launch/home/tvly/150324_flights-hero-image_1330x742.jpg">
-                    </div>
-                    <div class="card-stacked">
-                        <div class="card-content">
-                            <!-- flight option 2 -->
-                            <p>Flight 2</p>
-                            <p>$$</p>
-                            <p>American Airlines</p>
-                            <p>13 hrs 5m</p>
-                        </div>
-                        <div class="card-action">
-                            <a href="#">Select</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+  <div class="container">
+    <section>
+      <div class="col s12">
+        <a href="locations" class="breadcrumb blue-text text-darken-2">Location</a> >
+        <a href="#" class="breadcrumb blue-text text-darken-2">Flights</a>
+      </div>
+    </section>
+    <h2>Pick a Flight</h2>
+    <div class="row">
+      <div class="col s2">Filter</div>
+      <div class="col s3">
+        <input type="checkbox" class="filled-in"/>
+        <!-- filter for direct flights -->
+        <label>Direct Flight Only</label>
+      </div>
+      <div class="col s3">
+          <!-- filter for airlines -->
+        <label>Airlines</label>
+        <select class="browser-default">
+          <option value="" disabled selected>Choose your option</option>
+          <option value="1">United Airlines</option>
+          <option value="2">Delta</option>
+          <option value="3">American Airlines</option>
+        </select>
+      </div>
+      <div class="col s3">
+        <input type="checkbox" class="filled-in"/>
+        <!-- filter for business class flights because you fancy like that -->
+        <label>Business Class</label>
+      </div>
     </div>
+
+    <div class="row">
+      <div class="col s12 m7">
+        <div class="card horizontal">
+          <div class="card-image">
+            <img src="http://www.pulseheadlines.com/wp-content/uploads/2015/07/airplane-flying-sky.jpg">
+          </div>
+          <div class="card-stacked">
+            <div class="card-content">
+              <!-- flight option 1 -->
+              <p>Flight 1</p>
+              <p>$$$</p>
+              <p>Delta Airlines</p>
+              <p>9 hrs 40m</p>
+              <p>FLIGHT NUMBER OUT</p>
+              <p>FLIGHT NUMBER IN</p>
+            </div>
+            <div class="card-action">
+              <!-- INFORMATION BELOW WILL NEED TO BE UPDATE JUST AS THE CARD IS!!!!!! -->
+              <a href="{{ url_for('flights', trip_id=trip_id, destination=destination, flight_out=1, flight_in=2) }}">Select</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col s12 m7">
+        <div class="card horizontal">
+          <div class="card-image">
+            <img src="https://images.trvl-media.com/media/content/expus/graphics/launch/home/tvly/150324_flights-hero-image_1330x742.jpg">
+          </div>
+          <div class="card-stacked">
+            <div class="card-content">
+              <!-- flight option 2 -->
+              <p>Flight 2</p>
+              <p>$$</p>
+              <p>American Airlines</p>
+              <p>13 hrs 5m</p>
+              <p>FLIGHT NUMBER OUT</p>
+              <p>FLIGHT NUMBER IN</p>
+            </div>
+            <div class="card-action">
+              <!-- INFORMATION BELOW WILL NEED TO BE UPDATE JUST AS THE CARD IS!!!!!! -->
+              <a href="{{ url_for('flights', trip_id=trip_id, destination=destination, flight_out=3, flight_in=4) }}">Select</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 {% endblock %}
