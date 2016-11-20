@@ -3,53 +3,47 @@
 {% block content %}
 <!-- Create your trip -->
 <body class="createtrip">
-  <script src="/static/createtrip.js"></script>
-  <!-- Need to figure out what to do with home link -->
-  <!-- <div class="homelink">
-    <a href="{{ url_for('index') }}">Home</a>
-  </div> -->
-  <div class="logout">
-    <a href="{{ url_for('logout') }}"> Logout</a> 
-  </div>
-  <div>
-    {% if 'username' in session %}
-    <p id="welcome">Welcome {{ username }}!</p>
-    {% else %}
-    <form action="/login" method="POST">
-      <input type="username" name="username" placeholder="Username">
-      <input type="password" name="password" placeholder="Password">
-      <input type="submit" value="Log in">
-    </form>
-    {% endif %}
-  </div>
-  <div class="container">
+    <script src="/static/createtrip.js"></script>
+    <!-- Need to figure out what to do with home link -->
+    <!-- <div class="homelink"> -->
+    <!-- <a href="{{ url_for('index') }}">Home</a> -->
+    <!-- </div>  -->
+    <section>
+        <div class="logout">
+            <a href="{{ url_for('logout') }}"> Logout</a>
+        </div>
+    </section>
+
     <h2>Create a Trip</h2>
-  </div>
-  {% if error %}
+
+
+    {% if error %}
     <p class="error red-text">
-      <strong> Error:</strong>
-      {{ error }}
+        <strong> Error:</strong>
+        {{ error }}
     </p>
-  {% endif %}
-  <form action="" method="post" name="createtrip">
-    {{ form.hidden_tag() }}
-    <p>
-      Trip Name:<br>
-      {{form.trip_name(size=120)}}<br>
-    </p>
-    <p>
-      Outbound Date: MUST USE THIS FORMAT: YYYY-MM-DD<br>
-      {{form.date_outbound(size=120)}}<br>
-    </p>
-    <p>
-      Inbound Date: MUST USE THIS FORMAT: YYYY-MM-DD<br>
-      {{form.date_inbound(size=120)}}<br>
-    </p>
-    <p>
-      Budget:<br>
-      {{form.budget(size=120)}}<br>
-    </p>
-    <p><input type="submit" value="Make Your Trip"></p>
-  </form>
+    {% endif %}
+
+    <form action="" method="post" name="createtrip">
+        {{ form.hidden_tag() }}
+        <p>
+            Trip Name:<br>
+            {{form.trip_name(size=120)}}<br>
+        </p>
+        <p>
+            Outbound Date: MUST USE THIS FORMAT: YYYY-MM-DD<br>
+            {{form.date_outbound(size=120)}}<br>
+        </p>
+        <p>
+            Inbound Date: MUST USE THIS FORMAT: YYYY-MM-DD<br>
+            {{form.date_inbound(size=120)}}<br>
+        </p>
+        <p>
+            Budget:<br>
+            {{form.budget(size=120)}}<br>
+        </p>
+        <p><input type="submit" value="Make Your Trip"></p>
+    </form>
+
 </body>
 {% endblock %}

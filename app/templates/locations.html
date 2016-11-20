@@ -3,78 +3,88 @@
 {% block navcontent %}
 <a href="{{ url_for('home') }}" class="brand-logo center">Explorer</a>
 <ul class="right">
-  <li><a href="#">Logout</a></li>
+    <li><a href="#">Logout</a></li>
 </ul>
 {% endblock %}
 
 <!-- Locations you can choose from based on your budget and dates -->
 {% block content %}
 <body class="locations">
-  <div class="container">
-    <section>
-      <div class="col s12">
-        <a href="#!" class="breadcrumb blue-text text-darken-2">Locations</a>
-      </div>
-    </section>
-    <h2>Pick a Location</h2>
-    <div class="row">
-      <!-- filter for domestic only, type of location or nearby -->
-      <div class="col s2">Filter</div>
-      <div class="col s3">
-        <input type="checkbox" class="filled-in"/>
-        <label>Domestic Locations Only</label>
-      </div>
-      <div class="col s3">
-        <label>Type of Locations</label>
-        <select class="browser-default">
-          <option value="" disabled selected>Choose your option</option>
-          <option value="1">Exotic</option>
-          <option value="2">Urban</option>
-          <option value="3">Nature</option>
-        </select>
-      </div>
-      <div class="col s3">
-        <input type="checkbox" class="filled-in"/>
-        <label>Nearby (no flights needed)</label>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col s12 m7">
-        <div class="card horizontal">
-          <div class="card-image">
-            <img src="http://lorempixel.com/200/200/city/3">
-          </div>
-          <div class="card-stacked">
-            <div class="card-content">
-             <!--  option 1 -->
-              <p>Barcelona</p>
+    <div class="container">
+        <section>
+            <div class="col s12">
+                <a href="#!" class="breadcrumb blue-text text-darken-2">Locations</a>
             </div>
-            <div class="card-action">
-              <!-- INFORMATION BELOW WILL NEED TO BE UPDATE JUST AS THE CARD IS!!!!!! -->
-              <a href="{{ url_for('locations', trip_id=trip_id, destination='Barcelona') }}">Select</a>
-            </div>
-          </div>
-        </div>
-      </div>
+        </section>
 
-      <div class="col s12 m7">
-        <div class="card horizontal">
-          <div class="card-image">
-            <img src="http://lorempixel.com/200/200/nature/3">
-          </div>
-          <div class="card-stacked">
-            <div class="card-content">
-              <!--  option 2 -->
-              <p>Reykjavik</p>
+        <h2>Pick a Location</h2>
+
+        {% if error %}
+        <p class="error red-text">
+            <strong> Error:</strong>
+            {{ error }}
+        </p>
+        {% endif %}
+
+        <div class="row">
+            <!-- filter for domestic only, type of location or nearby -->
+            <div class="col s2">Filter</div>
+            <div class="col s3">
+                <input type="checkbox" class="filled-in"/>
+                <label>Domestic Locations Only</label>
             </div>
-            <div class="card-action">
-              <!-- INFORMATION BELOW WILL NEED TO BE UPDATE JUST AS THE CARD IS!!!!!! -->
-              <a href="{{ url_for('locations', trip_id=trip_id, destination='Reykjavik') }}">Select</a>
+            <div class="col s3">
+                <label>Type of Locations</label>
+                <select class="browser-default">
+                    <option value="" disabled selected>Choose your option</option>
+                    <option value="1">Exotic</option>
+                    <option value="2">Urban</option>
+                    <option value="3">Nature</option>
+                </select>
             </div>
-          </div>
+            <div class="col s3">
+                <input type="checkbox" class="filled-in"/>
+                <label>Nearby (no flights needed)</label>
+            </div>
         </div>
-      </div>
+
+        <div class="row">
+            <div class="col s12 m7">
+                <div class="card horizontal">
+                    <div class="card-image">
+                        <img src="http://lorempixel.com/200/200/city/3">
+                    </div>
+                    <div class="card-stacked">
+                        <div class="card-content">
+                            <!--  option 1 -->
+                            <p>Barcelona Spain</p>
+                        </div>
+                        <div class="card-action">
+                            <!-- INFORMATION BELOW WILL NEED TO BE UPDATE JUST AS THE CARD IS!!!!!! -->
+                            <a href="{{ url_for('locations', trip_id=trip_id, destination='Barcelona Spain') }}">Select</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col s12 m7">
+                <div class="card horizontal">
+                    <div class="card-image">
+                        <img src="http://lorempixel.com/200/200/nature/3">
+                    </div>
+                    <div class="card-stacked">
+                        <div class="card-content">
+                            <!--  option 2 -->
+                            <p>NYC New York</p>
+                        </div>
+                        <div class="card-action">
+                            <!-- INFORMATION BELOW WILL NEED TO BE UPDATE JUST AS THE CARD IS!!!!!! -->
+                            <a href="{{ url_for('locations', trip_id=trip_id, destination='NYC New York') }}">Select</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 </body>
 {% endblock %}

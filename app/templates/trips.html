@@ -5,65 +5,56 @@
 <!-- View all your trips and start a new one from here -->
 
 <body class="trips">
-  <section>
-    <!-- <div class="homelink">
-      <a href="{{ url_for('index') }}">Home</a>
-    </div> -->
-    <div class="logout">
-      <a href="{{ url_for('logout') }}"> Logout</a> 
+    <section>
+        <div class="logout">
+            <a href="{{ url_for('logout') }}"> Logout</a>
+        </div>
+    </section>
+    <div>
+        {% if 'user' in session %}
+        <p id="welcome"> Welcome {{ session['user'] }}!</p>
+        {% endif %}
     </div>
-  </section>
-  <div>
-    {% if 'username' in session %}
-    <p id="welcome"> Welcome {{ username }}!</p>
-    {% else %}
-    <form action="/login" method="POST">
-      <input type="username" name="username" placeholder="Username">
-      <input type="password" name="password" placeholder="Password">
-      <input type="submit" value="Log in">
-    </form>
-    {% endif %}
-  </div>
-  <br>
-  <br>
-  <div>
-    <h2>Create a Trip</h2>
-    <p><a href="{{ url_for('createtrip') }}">Create a Trip</a></p>
     <br>
     <br>
-    <h2>Your current trips</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Trip Name</th>
-            <th>Outbound Date</th>
-            <th>Inbound Date</th>
-            <th>Budget</th>
-            <th>Budget Remaining</th>
-            <th>Destination</th>
-            <th>Outbound Flight</th>
-            <th>Inbound Flight</th>
-            <th>Hotel</th>
-          </tr>
-        </thead>
-        {% for trip in trips %}
-        <tr>
-          <td>{{ trip['trip_name'] }}</td>
-          <td>{{ trip['date_outbound'] }}</td>
-          <td>{{ trip['date_inbound'] }}</td>
-          <td>{{ trip['budget'] }}</td>
-          <td>{{ trip['budget_remaining'] }}</td>
-          <td>{{ trip['destination'] }}</td>
-          <td>{{ trip['flight_outbound'] }}</td>
-          <td>{{ trip['flight_inbound'] }}</td>
-          <td>{{ trip['hotel'] }}</td>
-          <td><a href="{{ url_for('cancel_trip', trip_id=trip['trip_id']) }}">Cancel Trip</a></td>
-        </tr>
-        {% endfor %}
-      </table>
-    <br>
-    <br>
-  </div>
-  <script type="text/javascript" src="/static/_js.js"> </script>
+    <div>
+        <h2>Create a Trip</h2>
+        <p><a href="{{ url_for('createtrip') }}">Create a Trip</a></p>
+        <br>
+        <br>
+        <h2>Your current trips</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Trip Name</th>
+                    <th>Outbound Date</th>
+                    <th>Inbound Date</th>
+                    <th>Budget</th>
+                    <th>Budget Remaining</th>
+                    <th>Destination</th>
+                    <th>Outbound Flight</th>
+                    <th>Inbound Flight</th>
+                    <th>Hotel</th>
+                </tr>
+            </thead>
+            {% for trip in trips %}
+            <tr>
+                <td>{{ trip['trip_name'] }}</td>
+                <td>{{ trip['date_outbound'] }}</td>
+                <td>{{ trip['date_inbound'] }}</td>
+                <td>{{ trip['budget'] }}</td>
+                <td>{{ trip['budget_remaining'] }}</td>
+                <td>{{ trip['destination'] }}</td>
+                <td>{{ trip['flight_outbound'] }}</td>
+                <td>{{ trip['flight_inbound'] }}</td>
+                <td>{{ trip['hotel'] }}</td>
+                <td><a href="{{ url_for('cancel_trip', trip_id=trip['trip_id']) }}">Cancel Trip</a></td>
+            </tr>
+            {% endfor %}
+        </table>
+        <br>
+        <br>
+    </div>
+    <script type="text/javascript" src="/static/_js.js"> </script>
 </body>
 {% endblock %}
