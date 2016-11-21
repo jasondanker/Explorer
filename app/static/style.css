@@ -24,7 +24,7 @@
 }
 
 .login {
-    /*background-image: url("login1.jpeg");*/
+    background-image: url("login1.jpeg");
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
