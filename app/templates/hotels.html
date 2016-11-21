@@ -3,80 +3,87 @@
 {% block navcontent %}
 <a href="{{ url_for('home') }}" class="brand-logo center">Explorer</a>
 <ul class="right">
-    <li><a href="#">Logout</a></li>
+  <li><a href="#">Logout</a></li>
 </ul>
 {% endblock %}
 
+<!-- Choose a hotel for your trip! -->
+
 {% block content %}
 <body class="locations">
-    <div class="container">
-        <section>
-            <div class="col s12">
-                <a href="locations" class="breadcrumb blue-text text-darken-2">Location</a> >
-                <a href="flights" class="breadcrumb blue-text text-darken-2">Flights</a> >
-                <a href="#" class="breadcrumb blue-text text-darken-2">Hotels</a>
-            </div>
-        </section>
-        <h2>Select Your Hotel</h2>
+  <div class="container">
+    <section>
+      <div class="col s12">
+        <a href="locations" class="breadcrumb blue-text text-darken-2">Location</a> >
+        <a href="flights" class="breadcrumb blue-text text-darken-2">Flights</a> >
+        <a href="#" class="breadcrumb blue-text text-darken-2">Hotels</a>
+      </div>
+    </section>
+    <h2>Select Your Hotel</h2>
 
-        <div class="row">
-            <div class="col s2">Filter</div>
-            <div class="col s3">
-                <input type="checkbox" class="filled-in"/>
-                <label>Free WiFi</label>
-            </div>
-            <div class="col s3">
-                <label>Type of Hotels</label>
-                <select class="browser-default">
-                    <option value="" disabled selected>Choose your option</option>
-                    <option value="1">Fancy Hotels</option>
-                    <option value="2">Motels</option>
-                    <option value="3">AirBnB</option>
-                </select>
-            </div>
-            <div class="col s3">
-                <input type="checkbox" class="filled-in"/>
-                <label>Including Breakfast</label>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col s12 m7">
-                <div class="card horizontal">
-                    <div class="card-image">
-                        <img src="https://9968c6ef49dc043599a5-e151928c3d69a5a4a2d07a8bf3efa90a.ssl.cf2.rackcdn.com/293048-1.jpg">
-                    </div>
-                    <div class="card-stacked">
-                        <div class="card-content">
-                            <p>Hilton</p>
-                            <p>$$$</p>
-                            <p>Great location</p>
-                        </div>
-                        <div class="card-action">
-                            <a href="#">Select</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col s12 m7">
-                <div class="card horizontal">
-                    <div class="card-image">
-                        <img src="https://i.onthebeach.co.uk/v1/hotel_images/5aecefe7-0b37-4ffd-97d4-361cd8e62136/cover/1000/600/high/1.0/ac-hotel-barcelona-forum-by-marriott.jpeg">
-                    </div>
-                    <div class="card-stacked">
-                        <div class="card-content">
-                            <p>Marriott</p>
-                            <p>$$</p>
-                            <p>Good location</p>
-                        </div>
-                        <div class="card-action">
-                            <a href="#">Select</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="row">
+      <div class="col s2">Filter</div>
+     <!--  Filters for hotel: wifi, type and breakfast -->
+      <div class="col s3">
+        <input type="checkbox" class="filled-in"/>
+        <label>Free WiFi</label>
+      </div>
+      <div class="col s3">
+        <label>Type of Hotels</label>
+        <select class="browser-default">
+          <option value="" disabled selected>Choose your option</option>
+          <option value="1">Fancy Hotels</option>
+          <option value="2">Motels</option>
+          <option value="3">AirBnB</option>
+        </select>
+      </div>
+      <div class="col s3">
+        <input type="checkbox" class="filled-in"/>
+        <label>Including Breakfast</label>
+      </div>
     </div>
+
+    <div class="row">
+      <div class="col s12 m7">
+        <div class="card horizontal">
+          <div class="card-image">
+            <img src="https://9968c6ef49dc043599a5-e151928c3d69a5a4a2d07a8bf3efa90a.ssl.cf2.rackcdn.com/293048-1.jpg">
+          </div>
+          <div class="card-stacked">
+            <div class="card-content">
+              <!-- option 1 -->
+              <p>Hilton</p>
+              <p>$$$</p>
+              <p>Great location</p>
+            </div>
+            <div class="card-action">
+              <!-- INFORMATION BELOW WILL NEED TO BE UPDATE JUST AS THE CARD IS!!!!!! -->
+              <a href="{{ url_for('hotels', trip_id=trip_id, destination=destination, hotel=11) }}">Select</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col s12 m7">
+        <div class="card horizontal">
+          <div class="card-image">
+            <img src="https://i.onthebeach.co.uk/v1/hotel_images/5aecefe7-0b37-4ffd-97d4-361cd8e62136/cover/1000/600/high/1.0/ac-hotel-barcelona-forum-by-marriott.jpeg">
+          </div>
+            <div class="card-stacked">
+              <div class="card-content">
+                <!-- option 2 -->
+                <p>Marriott</p>
+                <p>$$</p>
+                <p>Good location</p>
+              </div>
+              <div class="card-action">
+                <!-- INFORMATION BELOW WILL NEED TO BE UPDATE JUST AS THE CARD IS!!!!!! -->
+                <a href="{{ url_for('hotels', trip_id=trip_id, destination=destination, hotel=22) }}">Select</a>
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 {% endblock %}

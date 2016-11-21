@@ -12,5 +12,3 @@
 //         ($(this).html("Remove this trip"));
 //         var removeTrip = $(this).parent();
 //         $(trip_id).remove();
-
-

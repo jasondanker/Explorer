@@ -1,31 +1,36 @@
 {% extends "base.html" %}
 {% block content %}
-<body class="login">
-
+<body class="login"> <!-- WE MAY WANT TO CHANGE THIS!!!! -->
   <div class= "container">
-    <h2>Login</h2>
+    <h2>Sign Up!</h2>
   </div>
-
   {% if error %}
     <p class="error red-text">
       <strong> Error:</strong>
       {{ error }}
     </p>
   {% endif %}
-
-  <form action="" method="post" name="login">
+  <form action="" method="post" name="signup">
   	{{ form.hidden_tag() }}
+    <p>
+    	First Name:<br>
+    	{{form.fname(size=120)}}<br>
+    </p>
+    <p>
+    	Last Name:<br>
+    	{{form.lname(size=120)}}<br>
+    </p>
     <p>
     	Email:<br>
     	{{form.email(size=120)}}<br>
-    </p>
+  	</p>
     <p>
     	Password:<br>
     	{{form.insecure_password(size=120)}}<br>
-   	</p>
-  	<p>
-  		<input type="submit" value="Login">
-  	</p>
+    </p>
+    <p>
+      <input type="submit" value="SignUp">
+    </p>
   </form>
 </body>
 {% endblock %}

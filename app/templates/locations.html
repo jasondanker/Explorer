@@ -7,17 +7,27 @@
 </ul>
 {% endblock %}
 
+<!-- Locations you can choose from based on your budget and dates -->
 {% block content %}
 <body class="locations">
     <div class="container">
         <section>
             <div class="col s12">
-                <a href="#!" class="breadcrumb blue-text text-darken-2">Location</a>
+                <a href="#!" class="breadcrumb blue-text text-darken-2">Locations</a>
             </div>
         </section>
+
         <h2>Pick a Location</h2>
 
+        {% if error %}
+        <p class="error red-text">
+            <strong> Error:</strong>
+            {{ error }}
+        </p>
+        {% endif %}
+
         <div class="row">
+            <!-- filter for domestic only, type of location or nearby -->
             <div class="col s2">Filter</div>
             <div class="col s3">
                 <input type="checkbox" class="filled-in"/>
@@ -46,10 +56,12 @@
                     </div>
                     <div class="card-stacked">
                         <div class="card-content">
-                            <p>Barcelona</p>
+                            <!--  option 1 -->
+                            <p>Barcelona Spain</p>
                         </div>
                         <div class="card-action">
-                            <a href="#">Select</a>
+                            <!-- INFORMATION BELOW WILL NEED TO BE UPDATE JUST AS THE CARD IS!!!!!! -->
+                            <a href="{{ url_for('locations', trip_id=trip_id, destination='Barcelona Spain') }}">Select</a>
                         </div>
                     </div>
                 </div>
@@ -62,10 +74,12 @@
                     </div>
                     <div class="card-stacked">
                         <div class="card-content">
-                            <p>Sicily</p>
+                            <!--  option 2 -->
+                            <p>NYC New York</p>
                         </div>
                         <div class="card-action">
-                            <a href="#">Select</a>
+                            <!-- INFORMATION BELOW WILL NEED TO BE UPDATE JUST AS THE CARD IS!!!!!! -->
+                            <a href="{{ url_for('locations', trip_id=trip_id, destination='NYC New York') }}">Select</a>
                         </div>
                     </div>
                 </div>
