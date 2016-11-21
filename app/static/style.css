@@ -24,7 +24,7 @@
 }
 
 .login {
-    background-image: url("login1.jpeg");
+    /*background-image: url("login1.jpeg");*/
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
@@ -36,7 +36,7 @@ input[type=submit] {
     font-weight: 400;
     margin-bottom: 20px;
     margin-top: 5px;
-    background-color: F5F5E9; 
+    background-color: F5F5E9;
     border-radius: 4px;
     border: 3px;
 }

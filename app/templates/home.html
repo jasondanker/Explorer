@@ -3,12 +3,22 @@
 {% block content %}
 <!-- homepage -->
 <body class="home">
-  <div class= "section">
-    <a href="{{ url_for('login') }}">Login</a>
-    <a href="{{ url_for('signup') }}">Sign Up</a>
-  </div>
-  <div class="explorer">
-    <h1>Welcome to Explorer</h1>
-  </div>
+    <div class= "section">
+        <div class="row">
+            <div class="col s2">
+                <a class="white-text" href="{{ url_for('login') }}">
+                    Login
+                </a>
+            </div>
+            <div class="col s2">
+                <a class="white-text" href="{{ url_for('signup') }}">
+                    Sign Up
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="explorer">
+        <h1>Welcome to Explorer</h1>
+    </div>
 </body>
 {% endblock %}
