@@ -131,7 +131,6 @@ def locations():
 
 	# user inputs
 	destination = request.args.get('destination')
-
 	# on user selected input
 	if destination is not None:
 		session['destination'] = destination
@@ -187,11 +186,13 @@ def flights():
 
 	# this technically should not happen if we dynamically generate
 	# the result for the locations page
+	# THIS NEEDS TO BE ABLE TO HANDLE A NONE RESPONSE
 	if data is None:
 		error = 'Sorry, We did not find any flights that match your criteria, please pick a new location'
-		return redirect(url_for('flights', trip_id=trip_id, destination=destination))
+		# GIVE THE USER AN OPPORTUNITY TO CHANGE: DATES, BUDGET, DESTINATION!!!!!!
+		return render_template('flights.html', trip_id=trip_id, destination=destination, error=error)
 
-	# on user selected input
+	# on user selected inputs
 	if all(i is not None for i in [flight_out, flight_in]):
 		# TODO: THIS WILL NEED TO UPDATE THE FLIGHTS TABLE AND THEN PUT THAT ID INTO THE TABLE BELOW!!!!!!!!!!!!!!!!!!!!!
 		models.update_trip(trip_id, 'flight_outbound', flight_out)
