@@ -65,6 +65,7 @@ def signup():
 			pwd = form.insecure_password.data
 			fname = form.fname.data
 			lname = form.lname.data
+
 			# insert the user into the database if the email address is not already associated with an account
 			if models.retrieve_user_id(email) is None:
 				user = models.signup_user(email, fname, lname, pwd)
@@ -110,12 +111,11 @@ def createtrip():
 
 		# passes trip_id to the next page via a URL parameter
 		return redirect(url_for('locations', trip_id=trip_id))
-	else:
-		# this makes sure the error message doesn't display if the user hasn't entered any information
-		if all(i is None for i in [trip_name, date_outbound, date_inbound, budget]):
-			error = None
-		else:
-			error = 'There is an error with your submission. Please check the fields (particularly the dates!)'
+
+	elif any(field is not None for field in [trip_name, date_outbound, date_inbound, budget]):
+		# only display error message if the user has entered incomplete (but not empty) information
+		error = 'There is an error with your submission. Please check the fields (particularly the dates!)'
+
 	return render_template('createtrip.html', error=error, form=form)
 
 # locations
@@ -125,9 +125,9 @@ def locations():
 
 	# inputs passed from previous pages
 	trip_id = request.args.get('trip_id')
-	date_outbound = escape(session['date_outbound'])
-	date_inbound = escape(session['date_inbound'])
-	budget = escape(session['budget'])
+	date_outbound = session['date_outbound']
+	date_inbound = session['date_inbound']
+	budget = session['budget']
 
 	# user inputs
 	destination = request.args.get('destination')
@@ -155,7 +155,8 @@ def locations():
 		else:
 			session['from_airport'] = from_airport
 			session['to_airport'] = to_airport
-			return redirect(url_for('flights', trip_id=trip_id, destination=destination))
+			# return redirect(url_for('flights', trip_id=trip_id, destination=destination))
+			return redirect(url_for('flights', trip_id=trip_id))
 
 	return render_template('locations.html', trip_id=trip_id, error=error)
 
@@ -166,16 +167,22 @@ def flights():
 
 	# inputs passed from previous page
 	trip_id = request.args.get('trip_id')
-	date_outbound = escape(session['date_outbound'])
-	date_inbound = escape(session['date_inbound'])
-	budget = escape(session['budget'])
-	destination = escape(session['destination'])
-	from_airport = escape(session['from_airport'])
-	to_airport = escape(session['to_airport'])
+	date_outbound = session['date_outbound']
+	date_inbound = session['date_inbound']
+	budget = session['budget']
+	destination = session['destination']
+	from_airport = session['from_airport']
+	to_airport = session['to_airport']
 
 	# user inputs
-	flight_out = request.args.get('flight_out')
-	flight_in = request.args.get('flight_in')
+	airline_chosen = request.args.get('airline')
+
+	 # None when the page is first loaded, once user selects a flight, all fields should be populated
+	if airline_chosen is not None:
+		destination_chosen = request.args.get('destination')
+		departure_date_chosen = request.args.get('departure_date')
+		return_date_chosen = request.args.get('return_date')
+		cost = float(request.args.get('cost'))
 
 	# fields: from_airport, to_airport, departure_date,
 	# duration, n = number of result returned
@@ -190,13 +197,22 @@ def flights():
 	if data is None:
 		error = 'Sorry, We did not find any flights that match your criteria, please pick a new location'
 		# GIVE THE USER AN OPPORTUNITY TO CHANGE: DATES, BUDGET, DESTINATION!!!!!!
-		return render_template('flights.html', trip_id=trip_id, destination=destination, error=error)
+		return render_template('flights.html', trip_id=trip_id, error=error)
 
 	# on user selected inputs
-	if all(i is not None for i in [flight_out, flight_in]):
+	if airline_chosen is not None:
 		# TODO: THIS WILL NEED TO UPDATE THE FLIGHTS TABLE AND THEN PUT THAT ID INTO THE TABLE BELOW!!!!!!!!!!!!!!!!!!!!!
-		models.update_trip(trip_id, 'flight_outbound', flight_out)
-		models.update_trip(trip_id, 'flight_inbound', flight_in)
+		outbound_id = models.create_flight(airline_chosen, 'NA',
+		departure_date_chosen, destination_chosen, to_airport,
+		str(cost/2), trip_id)
+
+		inbound_id = models.create_flight(airline_chosen, 'NA',
+		return_date_chosen, to_airport, destination_chosen,
+		str(cost/2), trip_id)
+
+		models.update_trip(trip_id, 'flight_outbound', str(outbound_id))
+		models.update_trip(trip_id, 'flight_inbound', str(inbound_id))
+
 		return redirect(url_for('hotels', trip_id=trip_id, destination=destination))
 
 	return render_template('flights.html', trip_id=trip_id, destination=destination, data=data)

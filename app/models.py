@@ -41,6 +41,20 @@ def create_trip(trip_name, date_outbound, date_inbound, budget):
 		trip_id = cur.lastrowid # Used to join the user to the trip
 		return trip_id # Used to join the user to the trip
 
+# Create Flight
+def create_flight(airline, flight_num, flight_date, origin, destination, cost, trip_id):
+	with sql.connect('app.db') as con:
+		con.row_factory = sql.Row
+		cur = con.cursor()
+		cur.execute('PRAGMA foreign_keys = ON')
+		sql_command = \
+		'INSERT INTO flights (airline, flight_number, flight_date, origin, destination, cost, trip_id, active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+		cur.execute(sql_command, (airline, flight_num, flight_date, origin, destination, cost, trip_id, 'TRUE'))
+		con.commit()
+		flight_id = cur.lastrowid # Used to join the user to the trip
+		return flight_id # Used to join the user to the trip
+
+# bind user with trip information
 def bind_user_trip(email, trip_id):
 	user_id = retrieve_user_id(email)[0]['user_id']
 	with sql.connect("app.db") as con:
