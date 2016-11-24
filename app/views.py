@@ -125,6 +125,7 @@ def locations():
 
 	# inputs passed from previous pages
 	trip_id = request.args.get('trip_id')
+	print('trip_id: ', trip_id)
 	date_outbound = session['date_outbound']
 	date_inbound = session['date_inbound']
 	budget = session['budget']
@@ -191,6 +192,28 @@ def flights():
 	duration = int(get_duration(date_outbound, date_inbound)),
 	n = 5)
 
+	# on user selected inputs
+	if airline_chosen is not None:
+		single_trip_cost = '{0:.3f}'.format(cost/2)
+
+		outbound_id = models.create_flight(airline_chosen, 'NA',
+		departure_date_chosen, destination_chosen, to_airport,
+		single_trip_cost, trip_id)
+
+		inbound_id = models.create_flight(airline_chosen, 'NA',
+		return_date_chosen, to_airport, destination_chosen,
+		single_trip_cost, trip_id)
+
+		models.update_trip(trip_id, 'flight_outbound', str(outbound_id))
+		models.update_trip(trip_id, 'flight_inbound', str(inbound_id))
+
+		# update budget with airline cost
+		budget -= cost
+		session['budget_remaining'] = budget
+		models.update_trip(trip_id, 'budget_remaining', '{0:.3f}'.format(budget))
+
+		return redirect(url_for('hotels', trip_id=trip_id, destination=destination))
+
 	# this technically should not happen if we dynamically generate
 	# the result for the locations page
 	# THIS NEEDS TO BE ABLE TO HANDLE A NONE RESPONSE
@@ -198,22 +221,6 @@ def flights():
 		error = 'Sorry, We did not find any flights that match your criteria, please pick a new location'
 		# GIVE THE USER AN OPPORTUNITY TO CHANGE: DATES, BUDGET, DESTINATION!!!!!!
 		return render_template('flights.html', trip_id=trip_id, error=error)
-
-	# on user selected inputs
-	if airline_chosen is not None:
-		# TODO: THIS WILL NEED TO UPDATE THE FLIGHTS TABLE AND THEN PUT THAT ID INTO THE TABLE BELOW!!!!!!!!!!!!!!!!!!!!!
-		outbound_id = models.create_flight(airline_chosen, 'NA',
-		departure_date_chosen, destination_chosen, to_airport,
-		str(cost/2), trip_id)
-
-		inbound_id = models.create_flight(airline_chosen, 'NA',
-		return_date_chosen, to_airport, destination_chosen,
-		str(cost/2), trip_id)
-
-		models.update_trip(trip_id, 'flight_outbound', str(outbound_id))
-		models.update_trip(trip_id, 'flight_inbound', str(inbound_id))
-
-		return redirect(url_for('hotels', trip_id=trip_id, destination=destination))
 
 	return render_template('flights.html', trip_id=trip_id, destination=destination, data=data)
 
@@ -233,7 +240,6 @@ def get_duration(date_1, date_2):
 # returns None on error
 # calls Amadeus API
 # TODO: Need to add budget constraint
-# TODO: Might need to make 2 calls: one for each leg, currently doing a roundtrip search
 def get_top_flights(from_airport, to_airport, departure_date, duration, n):
 	url = 'https://api.sandbox.amadeus.com/v1.2/flights/extensive-search'
 
