@@ -27,6 +27,7 @@
             <thead>
                 <tr>
                     <th>Trip Name</th>
+                    <th>Origin</th>
                     <th>Outbound Date</th>
                     <th>Inbound Date</th>
                     <th>Budget</th>
@@ -40,6 +41,7 @@
             {% for trip in trips %}
             <tr>
                 <td>{{ trip['trip_name'] }}</td>
+                <td>{{ trip['origin'] }}</td>
                 <td>{{ trip['date_outbound'] }}</td>
                 <td>{{ trip['date_inbound'] }}</td>
                 <td>{{ trip['budget'] }}</td>

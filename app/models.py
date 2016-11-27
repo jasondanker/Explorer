@@ -29,14 +29,14 @@ def signup_user(email, fname, lname, pwd):
 		con.commit()
 
 # Create Trip
-def create_trip(trip_name, date_outbound, date_inbound, budget):
+def create_trip(trip_name, origin, date_outbound, date_inbound, budget):
 	with sql.connect('app.db') as con:
 		con.row_factory = sql.Row
 		cur = con.cursor()
 		cur.execute('PRAGMA foreign_keys = ON')
 		sql_command = \
-		'INSERT INTO trips (trip_name, date_outbound, date_inbound, budget, budget_remaining, active) VALUES (?, ?, ?, ?, ?, ?)'
-		cur.execute(sql_command, (trip_name, date_outbound, date_inbound, budget, budget, 'TRUE'))
+		'INSERT INTO trips (trip_name, origin, date_outbound, date_inbound, budget, budget_remaining, active) VALUES (?, ?, ?, ?, ?, ?, ?)'
+		cur.execute(sql_command, (trip_name, origin, date_outbound, date_inbound, budget, budget, 'TRUE'))
 		con.commit()
 		trip_id = cur.lastrowid # Used to join the user to the trip
 		return trip_id # Used to join the user to the trip
@@ -74,7 +74,7 @@ def retrieve_trips(email):
 		cur = con.cursor()
 		cur.execute('PRAGMA foreign_keys = ON')
 		sql_command = \
-		"SELECT t.trip_id, t.trip_name, t.date_outbound, t.date_inbound, t.budget, t.budget_remaining, \
+		"SELECT t.trip_id, t.trip_name, t.origin, t.date_outbound, t.date_inbound, t.budget, t.budget_remaining, \
 		t.destination, t.flight_outbound, t.flight_inbound, t.hotel \
 		FROM trips t JOIN user_trips_junct ut JOIN users u \
 		WHERE u.email = '" + email + "' AND \

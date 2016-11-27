@@ -1,5 +1,5 @@
 from flask.ext.wtf import Form
-from wtforms import StringField, IntegerField, PasswordField, RadioField, DateField
+from wtforms import StringField, IntegerField, PasswordField, SelectField, DateField
 from flask_wtf.html5 import EmailField
 from wtforms import validators
 
@@ -17,7 +17,10 @@ class SignUpForm(Form):
 
 # create trip form
 class CreateTripForm(Form):
+	# Could store this in the DB and pull it in here. This may be a more *real* solution
+	origin_list = [('SFO', 'San Francisco, CA'),('OAK', 'Oakland, CA'),('SJC', 'San Jose, CA'),('JFK','New York, NY'),('EWR','Newark, NJ')]
 	trip_name = StringField('trip_name', [validators.required()])
+	origin = SelectField('origin', [validators.required()], choices=origin_list)
 	date_outbound = DateField('date_outbound', [validators.required()])
 	date_inbound = DateField('date_inbound', [validators.required()])
 	budget = IntegerField('budget', [validators.required()])

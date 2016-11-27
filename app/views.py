@@ -82,6 +82,7 @@ def createtrip():
 
 	# user Input
 	trip_name = form.trip_name.data
+	origin = form.origin.data
 	date_outbound = form.date_outbound.data
 	date_inbound = form.date_inbound.data
 	budget = form.budget.data
@@ -90,6 +91,7 @@ def createtrip():
 	# TODO: I am not sure how to store date object, as storing it
 	# as is produces a date non-serializable error, currently
 	# converting it to string
+	session['origin'] = origin
 	session['date_outbound'] = str(date_outbound)
 	session['date_inbound'] = str(date_inbound)
 	session['budget'] = budget
@@ -99,7 +101,7 @@ def createtrip():
 		email = session['email']
 
 		# insert the trip into the database and bind the user to the trip
-		trip_id = models.create_trip(trip_name, date_outbound, date_inbound, budget)
+		trip_id = models.create_trip(trip_name, origin, date_outbound, date_inbound, budget)
 		models.bind_user_trip(email, trip_id)
 
 		# IMPORTANT! Amadeus API does not support trip search with
@@ -125,10 +127,10 @@ def locations():
 
 	# inputs passed from previous pages
 	trip_id = request.args.get('trip_id')
-	print('trip_id: ', trip_id)
 	date_outbound = session['date_outbound']
 	date_inbound = session['date_inbound']
 	budget = session['budget']
+	origin = session['origin']
 
 	# user inputs
 	destination = request.args.get('destination')
@@ -139,7 +141,7 @@ def locations():
 
 		# convert destination into airport
 		# TODO: Need to dynamically populate this value
-		from_airport = 'SFO'
+		from_airport = origin
 
 		# find the closest airport based on the destination
 		to_airport = get_nearest_airport(destination)
@@ -335,7 +337,11 @@ def cancel_trip(trip_id):
 # homepage
 @myapp.route('/home')
 def home():
-	return render_template('home.html')
+	if 'user' in session:
+		user = escape(session['user'])
+		return redirect('/trips')
+	else:
+		return render_template('home.html')
 
 # logout
 @myapp.route('/logout')

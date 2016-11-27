@@ -12,6 +12,7 @@ drop table if exists trips;
 create table trips (
 	trip_id integer primary key,
 	trip_name text not null,
+	origin text not null,
 	budget integer not null,
 	date_outbound date not null,
 	date_inbound date not null,
