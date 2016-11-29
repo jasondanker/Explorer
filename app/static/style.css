@@ -6,9 +6,20 @@
     background-size: cover;
 }
 
+table {
+    background: rgba(255,255,255,.65);
+}
 
 .createtrip {
     background-image: url("createtrip4.jpeg");
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+.locations {
+    background-image: url("pineapple.jpg");
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
@@ -23,8 +34,23 @@
     background-size: cover;
 }
 
+.login-heading {
+    float: left;
+    padding-left: 2%;
+}
+
+.form1 {
+    padding: 15%;
+}
+
+form {
+    padding: 7%;
+    font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
+    color: #d3d3d3;
+}
+
 .login {
-    background-image: url("login1.jpeg");
+    background-image: url("calming.jpg");
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
@@ -94,7 +120,7 @@ h1 {
 }
 
 
-.logout {
+#logout {
     float: right;
 }
 

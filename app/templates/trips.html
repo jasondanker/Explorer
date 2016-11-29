@@ -6,8 +6,8 @@
 
 <body class="trips">
     <section>
-        <div class="logout">
-            <a href="{{ url_for('logout') }}"> Logout</a>
+        <div id="logout">
+            <a class="white-text" href="{{ url_for('logout') }}"> Logout</a>
         </div>
     </section>
     <div>
@@ -23,7 +23,7 @@
         <br>
         <br>
         <h2>Your current trips</h2>
-        <table>
+        <table class="centered">
             <thead>
                 <tr>
                     <th>Trip Name</th>

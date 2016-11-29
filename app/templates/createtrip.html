@@ -24,31 +24,38 @@
     </p>
     {% endif %}
 
-    <form action="" method="post" name="createtrip">
-        {{ form.hidden_tag() }}
-        <p>
-            Trip Name:<br>
-            {{form.trip_name(size=120)}}<br>
-        </p>
-        <p>
-            Origin:<br>
-            Looks TERRIBLE because Materialize's SELECT function is TERRIBLE<br>
-            {{form.origin(class_="browser-default")}}<br>
-        </p>
-        <p>
-            Outbound Date: MUST USE THIS FORMAT: YYYY-MM-DD<br>
-            {{form.date_outbound(size=120)}}<br>
-        </p>
-        <p>
-            Inbound Date: MUST USE THIS FORMAT: YYYY-MM-DD<br>
-            {{form.date_inbound(size=120)}}<br>
-        </p>
-        <p>
-            Budget:<br>
-            {{form.budget(size=120)}}<br>
-        </p>
-        <p><input type="submit" value="Make Your Trip"></p>
-    </form>
+    <!-- <div class="row">
+        <form class="col s12">
+          <div class="row">
+            <div class="input-field col s6">
+                <input placeholder="Placeholder" id="first_name" type="text" class="validate">
+                <label for="first_name">First Name</label>
+            </div> -->
+            <form action="" method="post" name="createtrip">
+                {{ form.hidden_tag() }}
+                <p>
+                    Trip Name:<br>
+                    {{form.trip_name(size=120)}}<br>
+                </p>
+                <p>
+                    Origin:<br>
+                    (Looks TERRIBLE because Materialize's SELECT function is TERRIBLE)<br>
+                    {{form.origin(class_="browser-default")}}<br>
+                </p>
+                <p>
+                    Arrival Date: (MUST USE THIS FORMAT: YYYY-MM-DD)<br>
+                    {{form.date_outbound(size=120)}}<br>
+                </p>
+                <p>
+                    Departure Date: (SAME FORMAT; NO MORE THAN 15 DAYS)<br>
+                    {{form.date_inbound(size=120)}}<br>
+                </p>
+                <p>
+                    Budget: (NUMBERS ONLY, NO $ FIRST)<br>
+                    {{form.budget(size=120)}}<br>
+                </p>
+                <p><input type="submit" value="Make Your Trip"></p>
+            </form>
 
 </body>
 {% endblock %}
