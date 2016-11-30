@@ -52,13 +52,19 @@
           <div class="card-stacked">
             <div class="card-content">
               <!-- option 1 -->
-              <p>Hilton</p>
-              <p>$$$</p>
-              <p>Great location</p>
+              <p>Hotel: Hilton</p>
+              <p>Price: 125.00 USD</p>
+              <p>Location: Great location</p>
             </div>
             <div class="card-action">
               <!-- INFORMATION BELOW WILL NEED TO BE UPDATE JUST AS THE CARD IS!!!!!! -->
-              <a href="{{ url_for('hotels', trip_id=trip_id, destination=destination, hotel=11) }}">Select</a>
+              <a href="{{ url_for('hotels',
+                    trip_id=trip_id,
+                    hotel='Hilton',
+                    location='Great location',
+                    check_in='2016-12-25',
+                    check_out='2016-12-31',
+                    cost='125.00') }}">Select This Fake Data</a>
             </div>
           </div>
         </div>
@@ -72,13 +78,17 @@
             <div class="card-stacked">
               <div class="card-content">
                 <!-- option 2 -->
-                <p>Marriott</p>
-                <p>$$</p>
-                <p>Good location</p>
+                <p>{{info}}<p>
               </div>
               <div class="card-action">
                 <!-- INFORMATION BELOW WILL NEED TO BE UPDATE JUST AS THE CARD IS!!!!!! -->
-                <a href="{{ url_for('hotels', trip_id=trip_id, destination=destination, hotel=22) }}">Select</a>
+                <a href="{{ url_for('hotels',
+                trip_id=trip_id,
+                hotel='Marriott',
+                location='Good location',
+                check_in='2016-12-25',
+                check_out='2016-12-31',
+                cost='300.00') }}">Select That Fake Data</a>
               </div>
             </div>
         </div>

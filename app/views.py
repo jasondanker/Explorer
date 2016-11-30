@@ -308,18 +308,80 @@ def get_lat_long(city):
 		return None
 
 # hotels
-@myapp.route('/hotels')
+@myapp.route('/hotels', methods=['GET','POST'])
 def hotels():
 	error = None
+
+	# inputs passed from previous page
 	trip_id = request.args.get('trip_id')
-	destination = request.args.get('destination')
-	hotel = request.args.get('hotel')
-	print(hotel)
-	if hotel is not None:
-		# TODO: THIS WILL NEED TO UPDATE THE HOTELS TABLE AND THEN PUT THAT ID INTO THE TABLE BELOW!!!!!!!!!!!!!!!!!!!!!
-		models.update_trip(trip_id, 'hotel', hotel)
-		return redirect('/trips')
-	return render_template('hotels.html', trip_id=trip_id, destination=destination)
+	date_outbound = (session['date_outbound'])
+	date_inbound = (session['date_inbound'])
+	budget = (session['budget'])
+	destination = (session['destination'])
+
+
+	#user input
+	hotel_chosen = request.args.get('hotel')
+
+	if hotel_chosen is not None:
+		check_in = request.args.get('check_in')
+		check_out = request.args.get('check_out')
+		location = request.args.get('location')
+		cost = float(request.args.get('cost'))
+
+	#uses inputs from above 
+	data = get_top_hotels(arrival_date=date_outbound, 
+	departure_date=date_inbound,  
+	destination=destination, 
+	n = 5)
+
+	if hotel_chosen is not None: 
+
+		hotel = models.create_hotel(hotel_chosen, check_in, check_out, location, cost, trip_id)
+
+		models.update_trip(trip_id, 'hotel', str(hotel))
+	
+		# re-calculate budget
+		# from yiyi's code
+		budget -= cost
+		session['budget_remaining'] = budget
+		models.update_trip(trip_id, 'budget_remaining', '{0:.3f}'.format(budget))
+		return redirect(url_for('trips', trip_id=trip_id, destination=destination))
+
+	if data is None:
+		error = 'Sorry, We did not find any hotels that match your criteria, please revise your search.'
+		return render_template('hotels.html', trip_id=trip_id, destination=destination, error=error)
+
+	return render_template('hotels.html', trip_id=trip_id, destination=destination, data=data)
+
+
+# helper function for hotels function
+
+def get_top_hotels(arrival_date, departure_date, destination, n):
+
+	location = get_lat_long(city=destination) #uses yiyi's get_lat_long helper function
+	if location is None:
+		return None
+	else:
+		url = 'https://api.sandbox.amadeus.com/v1.2/hotels/search-circle'
+
+		params = dict(
+		latitude=location['lat'],
+		longitude=location['lng'],
+		radius='45',
+		check_in=arrival_date,
+		check_out=departure_date,
+    	apikey=AMADEUS_API_KEY
+		)
+
+		try:
+		# show the cheapest hotels result. Hotel name, city and total cost 
+			resp = requests.get(url=url, params=params)
+			data = json.loads(resp.text)
+			result = [{'property_name': result['property_name'], 'city': result['address']['city'], 'price': result['total_price']['amount']} for result in data['results'][:]]
+			return result
+		except:
+			return None
 
 # Display a user's current trips
 @myapp.route('/trips')

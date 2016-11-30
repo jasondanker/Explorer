@@ -46,6 +46,7 @@ create table hotels (
 	check_out date not null,
 	location text not null, -- Likely to be expanded
 	rating integer,
+	cost integer not null,
 	trip_id integer,
 	active boolean not null,
 	foreign key (trip_id) references trips(trip_id)
