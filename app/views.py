@@ -238,9 +238,13 @@ def flights():
 	# the result for the locations page
 	# THIS NEEDS TO BE ABLE TO HANDLE A NONE RESPONSE
 	if data is None:
-		error = 'Sorry, We did not find any flights that match your criteria, please pick a new location'
-		# GIVE THE USER AN OPPORTUNITY TO CHANGE: DATES, BUDGET, DESTINATION!!!!!!
-		return render_template('flights.html', trip_id=trip_id, error=error)
+		try:
+			session.pop('destination', None)
+			error = 'Sorry, We did not find any flights that match your criteria, please pick a new location'
+			return render_template('locations.html', trip_id=trip_id, error=error)
+		except:
+			return render_template('locations.html', trip_id=trip_id)
+		# GIVE THE USER AN OPPORTUNITY TO CHANGE: DATES, BUDGET!!!!!!!
 
 	return render_template('flights.html', trip_id=trip_id, destination=destination, data=data)
 
@@ -351,7 +355,7 @@ def hotels():
 	data = get_top_hotels(arrival_date=date_outbound,
 	departure_date=date_inbound,
 	destination=destination,
-	budget=int(session['budget']),
+	budget=int(session['budget_remaining']),
 	n = 5)
 	#print("hi hotel")
 
@@ -369,8 +373,15 @@ def hotels():
 		return redirect(url_for('trips', trip_id=trip_id, destination=destination))
 
 	if data is None:
-		error = 'Sorry, We did not find any hotels that match your criteria, please revise your search.'
-		return render_template('hotels.html', trip_id=trip_id, destination=destination, error=error)
+		try:
+			session.pop('from_airport', None)
+			session.pop('to_airport', None)
+			session.pop('budget_remaining', None)
+			error = 'Sorry, We did not find any hotels that match your criteria, please revise your search.'
+			return render_template('flights.html', trip_id=trip_id, error=error)
+		except:
+			return render_template('flights.html', trip_id=trip_id)
+		# GIVE THE USER AN OPPORTUNITY TO CHANGE: DATES, BUDGET!!!!!!!
 
 	return render_template('hotels.html', trip_id=trip_id, destination=destination, data=data)
 
