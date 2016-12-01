@@ -324,8 +324,10 @@ def hotels():
 	hotel_chosen = request.args.get('hotel')
 
 	if hotel_chosen is not None:
-		check_in = request.args.get('check_in')
-		check_out = request.args.get('check_out')
+		#check_in = request.args.get('check_in')
+		check_in = date_outbound
+		#check_out = request.args.get('check_out')
+		check_out = date_inbound
 		location = request.args.get('location')
 		cost = float(request.args.get('cost'))
 
@@ -334,6 +336,7 @@ def hotels():
 	departure_date=date_inbound,  
 	destination=destination, 
 	n = 5)
+	#print("hi hotel")
 
 	if hotel_chosen is not None: 
 
