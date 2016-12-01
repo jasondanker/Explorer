@@ -10,6 +10,11 @@ table {
     background: rgba(255,255,255,.65);
 }
 
+.form_background {
+    background: rgba(255,255,255,.65);
+    padding: 20px;
+}
+
 .createtrip {
     background-image: url("createtrip4.jpeg");
     -webkit-background-size: cover;

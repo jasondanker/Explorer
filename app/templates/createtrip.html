@@ -23,15 +23,10 @@
     </p>
     {% endif %}
 
-    <!-- <div class="row">
-        <form class="col s12">
-          <div class="row">
-            <div class="input-field col s6">
-                <input placeholder="Placeholder" id="first_name" type="text" class="validate">
-                <label for="first_name">First Name</label>
-            </div> -->
-            <form action="" method="post" name="createtrip">
-                {{ form.hidden_tag() }}
+    <div class="row">
+        <form action="" method="post" name="createtrip">
+            {{ form.hidden_tag() }}
+            <div class="col s12 m7 form_background">
                 <p>
                     Trip Name:<br>
                     {{form.trip_name(size=120)}}<br>
@@ -53,8 +48,11 @@
                     Budget (numbers only):<br>
                     {{form.budget(size=120)}}<br>
                 </p>
+            </div>
+            <div class="col s12 m7">
                 <p><input type="submit" value="Make Your Trip"></p>
-            </form>
-
+            </div>
+        </form>
+    </div>
 </body>
 {% endblock %}
