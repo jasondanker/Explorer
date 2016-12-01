@@ -134,13 +134,21 @@ def locations():
 
 	# user inputs
 	destination = request.args.get('destination')
+
+	# populate the list of potential destinations
+	destinations = []
+	potential_destinations = get_potential_destinations(origin, date_outbound, date_inbound)
+	for destination in potential_destinations:
+		cost = get_min_cost(origin, destination, date_outbound, date_inbound)
+		if cost <= budget:
+			destinations += destination
+
 	# on user selected input
 	if destination is not None:
 		session['destination'] = destination
 		models.update_trip(trip_id, 'destination', destination)
 
 		# convert destination into airport
-		# TODO: Need to dynamically populate this value
 		from_airport = origin
 
 		# find the closest airport based on the destination
@@ -158,10 +166,19 @@ def locations():
 		else:
 			session['from_airport'] = from_airport
 			session['to_airport'] = to_airport
-			# return redirect(url_for('flights', trip_id=trip_id, destination=destination))
 			return redirect(url_for('flights', trip_id=trip_id))
 
-	return render_template('locations.html', trip_id=trip_id, error=error)
+	return render_template('locations.html', trip_id=trip_id, error=error, destinations=destinations)
+
+# TODO: need to implement this funtion using Amadeus inspiration search
+def get_potential_destinations(origin, date_outbound, date_inbound):
+	# return a list of potential locations
+	return []
+
+# TODO: need to implement this function using flights & hotels functions below
+def get_min_cost(origin, destination, date_outbound, date_inbound):
+	# given origin and destination, return the minimum cost
+	return 0
 
 # flights
 @myapp.route('/flights', methods=['GET','POST'])
@@ -192,6 +209,7 @@ def flights():
 	data = get_top_flights(from_airport, to_airport,
 	departure_date = date_outbound,
 	duration = int(get_duration(date_outbound, date_inbound)),
+	budget = int(budget),
 	n = 5)
 
 	# on user selected inputs
@@ -241,8 +259,7 @@ def get_duration(date_1, date_2):
 # returns the top n flights given departure and arrival details
 # returns None on error
 # calls Amadeus API
-# TODO: Need to add budget constraint
-def get_top_flights(from_airport, to_airport, departure_date, duration, n):
+def get_top_flights(from_airport, to_airport, departure_date, duration, budget, n):
 	url = 'https://api.sandbox.amadeus.com/v1.2/flights/extensive-search'
 
 	params = dict(
@@ -251,7 +268,7 @@ def get_top_flights(from_airport, to_airport, departure_date, duration, n):
     departure_date=departure_date,
 	duration=duration,
 	# one-way='true', # default is false
-	# max_price=1000, # default is 950
+	max_price=budget, # default is 950
     apikey=AMADEUS_API_KEY
 	)
 
@@ -314,11 +331,10 @@ def hotels():
 
 	# inputs passed from previous page
 	trip_id = request.args.get('trip_id')
-	date_outbound = (session['date_outbound'])
-	date_inbound = (session['date_inbound'])
-	budget = (session['budget'])
-	destination = (session['destination'])
-
+	date_outbound = session['date_outbound']
+	date_inbound = session['date_inbound']
+	remaining_budget = session['budget_remaining']
+	destination = session['destination']
 
 	#user input
 	hotel_chosen = request.args.get('hotel')
@@ -331,24 +347,25 @@ def hotels():
 		location = request.args.get('location')
 		cost = float(request.args.get('cost'))
 
-	#uses inputs from above 
-	data = get_top_hotels(arrival_date=date_outbound, 
-	departure_date=date_inbound,  
-	destination=destination, 
+	#uses inputs from above
+	data = get_top_hotels(arrival_date=date_outbound,
+	departure_date=date_inbound,
+	destination=destination,
+	budget=int(session['budget']),
 	n = 5)
 	#print("hi hotel")
 
-	if hotel_chosen is not None: 
+	if hotel_chosen is not None:
 
 		hotel = models.create_hotel(hotel_chosen, check_in, check_out, location, cost, trip_id)
 
 		models.update_trip(trip_id, 'hotel', str(hotel))
-	
+
 		# re-calculate budget
 		# from yiyi's code
-		budget -= cost
-		session['budget_remaining'] = budget
-		models.update_trip(trip_id, 'budget_remaining', '{0:.3f}'.format(budget))
+		remaining_budget -= cost
+		session['budget_remaining'] = remaining_budget
+		models.update_trip(trip_id, 'budget_remaining', '{0:.3f}'.format(remaining_budget))
 		return redirect(url_for('trips', trip_id=trip_id, destination=destination))
 
 	if data is None:
@@ -359,9 +376,7 @@ def hotels():
 
 
 # helper function for hotels function
-
-def get_top_hotels(arrival_date, departure_date, destination, n):
-
+def get_top_hotels(arrival_date, departure_date, destination, budget, n):
 	location = get_lat_long(city=destination) #uses yiyi's get_lat_long helper function
 	if location is None:
 		return None
@@ -374,11 +389,12 @@ def get_top_hotels(arrival_date, departure_date, destination, n):
 		radius='45',
 		check_in=arrival_date,
 		check_out=departure_date,
+		max_rate=budget,
     	apikey=AMADEUS_API_KEY
 		)
 
 		try:
-		# show the cheapest hotels result. Hotel name, city and total cost 
+		# show the cheapest hotels result. Hotel name, city and total cost
 			resp = requests.get(url=url, params=params)
 			data = json.loads(resp.text)
 			result = [{'property_name': result['property_name'], 'city': result['address']['city'], 'price': result['total_price']['amount']} for result in data['results'][:]]
