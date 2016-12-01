@@ -74,6 +74,7 @@
         </div>
     </div>
 
+    {% for result in data %}
     <div class="col s12 m7">
         <div class="card horizontal">
             <div class="card-image">
@@ -82,23 +83,31 @@
             <div class="card-stacked">
                 <div class="card-content">
                     <!-- option 2 -->
-                    <p>{{data[0]['property_name']}}<p>
-                        <p>{{data[0]['city']}}<p>
-                            <p>{{data[0]['price']}}<p>
-                            </div>
-                            <div class="card-action">
-                                <!-- INFORMATION BELOW WILL NEED TO BE UPDATE JUST AS THE CARD IS!!!!!! -->
-                                <a href="{{ url_for('hotels',
-                                trip_id=trip_id,
-                                hotel=data[0]['property_name'],
-                                location=data[0]['city'],
-                                cost=data[0]['price']) }}">Select</a>
-                            </div>
-                        </div>
-                    </div>
+                    <p>
+                        {{result['property_name']}}
+                    </p>
+                    <p>
+                        {{result['city']}}
+                    </p>
+                    <p>
+                        {{result['price']}}
+                    </p>
                 </div>
-
+                <div class="card-action">
+                    <!-- INFORMATION BELOW WILL NEED TO BE UPDATE JUST AS THE CARD IS!!!!!! -->
+                    <a href="{{ url_for('hotels',
+                    trip_id=trip_id,
+                    hotel=result['property_name'],
+                    location=result['city'],
+                    cost=result['price']) }}">
+                    Select</a>
+                </div>
             </div>
         </div>
-    </body>
-    {% endblock %}
+        {% endfor %}
+    </div>
+</div>
+</div>
+
+</body>
+{% endblock %}
