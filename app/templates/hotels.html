@@ -78,21 +78,22 @@
             <div class="card-stacked">
               <div class="card-content">
                 <!-- option 2 -->
-                <p>{{info}}<p>
+                <p>{{data[0]['property_name']}}<p>
+                <p>{{data[0]['city']}}<p>
+                <p>{{data[0]['price']}}<p>
               </div>
               <div class="card-action">
                 <!-- INFORMATION BELOW WILL NEED TO BE UPDATE JUST AS THE CARD IS!!!!!! -->
                 <a href="{{ url_for('hotels',
                 trip_id=trip_id,
-                hotel='Marriott',
-                location='Good location',
-                check_in='2016-12-25',
-                check_out='2016-12-31',
-                cost='300.00') }}">Select That Fake Data</a>
+                hotel=data[0]['property_name'],
+                location=data[0]['city'],
+                cost=data[0]['price']) }}">Select</a>
               </div>
             </div>
         </div>
       </div>
+
     </div>
   </div>
 </body>
