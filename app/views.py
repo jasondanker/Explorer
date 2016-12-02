@@ -408,7 +408,7 @@ def get_top_hotels(arrival_date, departure_date, destination, budget, n):
 		# show the cheapest hotels result. Hotel name, city and total cost
 			resp = requests.get(url=url, params=params)
 			data = json.loads(resp.text)
-			result = [{'property_name': result['property_name'], 'city': result['address']['city'], 'price': result['total_price']['amount']} for result in data['results'][:]]
+			result = [{'property_name': result['property_name'], 'city': result['address']['city'], 'price': result['total_price']['amount']} for result in data['results'][:n]]
 			return result
 		except:
 			return None

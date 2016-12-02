@@ -10,7 +10,7 @@
 <!-- Choose a hotel for your trip! -->
 
 {% block content %}
-<body class="locations">
+<body class="search">
     <div class="container">
         <section>
             <nav class="transparent z-depth-0">
@@ -36,8 +36,8 @@
                         <div class="card-content">
                             <!-- option 1 -->
                             <p>Hotel: Hilton</p>
-                            <p>Price: 125.00 USD</p>
                             <p>Location: Great location</p>
+                            <p>Total Price: 125.00 USD</p>
                         </div>
                         <div class="card-action">
                             <!-- INFORMATION BELOW WILL NEED TO BE UPDATE JUST AS THE CARD IS!!!!!! -->
@@ -47,7 +47,7 @@
                             location='Great location',
                             check_in='2016-12-25',
                             check_out='2016-12-31',
-                            cost='125.00') }}">Select This Fake Data</a>
+                            cost='125.00') }}">Select This Placeholder Data</a>
                         </div>
                     </div>
                 </div>
@@ -62,13 +62,13 @@
                     <div class="card-stacked">
                         <div class="card-content">
                             <p>
-                                {{result['property_name']}}
+                                Hotel: {{result['property_name']}}
                             </p>
                             <p>
-                                {{result['city']}}
+                                Location: {{result['city']}}
                             </p>
                             <p>
-                                {{result['price']}}
+                                Total Price: {{result['price']}}
                             </p>
                         </div>
                         <div class="card-action">
@@ -87,6 +87,6 @@
 
         </div>
     </div>
-    
+
 </body>
 {% endblock %}

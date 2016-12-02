@@ -10,7 +10,7 @@
 <!-- this page is to find and select flights for your trip! -->
 
 {% block content %}
-<body class="locations">
+<body class="search">
     <div class="container">
 
         <section>
@@ -33,90 +33,74 @@
         </p>
         {% endif %}
 
-        <!-- <div class="row">
-        <div class="col s2">Filter</div>
-        <div class="col s3">
-        <input type="checkbox" class="filled-in"/> -->
-        <!-- filter for direct flights -->
-        <!-- <label>Direct Flight Only</label>
-    </div>
-    <div class="col s3"> -->
-    <!-- filter for airlines -->
-    <!-- <label>Airlines</label>
-    <select class="browser-default">
-    <option value="" disabled selected>Choose your option</option>
-    <option value="1">United Airlines</option>
-    <option value="2">Delta</option>
-    <option value="3">American Airlines</option>
-</select>
-</div>
-<div class="col s3">
-<input type="checkbox" class="filled-in"/> -->
-<!-- filter for business class flights because you fancy like that -->
-<!-- <label>Business Class</label>
-</div>
-</div> -->
 
-<div class="row">
-    <div class="col s12 m7">
-        <div class="card horizontal">
-            <div class="card-image">
-                <img src="http://www.pulseheadlines.com/wp-content/uploads/2015/07/airplane-flying-sky.jpg">
-            </div>
-            <div class="card-stacked">
-                <div class="card-content">
-                    <!-- flight option 1 -->
-                    <p>Placeholder Flight</p>
-                    <p>254.32 USD</p>
-                    <p>Delta Airlines</p>
-                    <p>9 hrs 40m</p>
-                    <p>FLIGHT NUMBER OUT</p>
-                    <p>FLIGHT NUMBER IN</p>
-                </div>
-                <div class="card-action">
-                    <!-- INFORMATION BELOW WILL NEED TO BE UPDATE JUST AS THE CARD IS!!!!!! -->
-                    <a href="{{ url_for('flights',
-                    trip_id=trip_id,
-                    airline='DE',
-                    destination='FRA',
-                    departure_date='2016-12-25',
-                    return_date='2016-12-31',
-                    cost='254.32') }}">Select Fake Data</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Actual flights info from Amadeus API -->
-    {% for result in data %}
-    <div class="col s12 m7">
-        <div class="card horizontal">
-            <div class="card-image">
-                <img src="https://images.trvl-media.com/media/content/expus/graphics/launch/home/tvly/150324_flights-hero-image_1330x742.jpg">
-            </div>
-            <div class="card-stacked">
-                <div class="card-content">
-                    <!-- flight option 2 -->
-                    <p>Airline: {{result['airline']}} <p>
-                        <p>Price: {{result['price']}} <p>
-                            <p>Departure Date: {{result['departure_date']}} <p>
-                                <p>Return Date: {{result['return_date']}} <p>
-                                </div>
-                                <div class="card-action">
-                                    <a href="{{ url_for('flights',
-                                    trip_id=trip_id,
-                                    airline=result['airline'],
-                                    destination=result['destination'],
-                                    departure_date=result['departure_date'],
-                                    return_date=result['return_date'],
-                                    cost=result['price']) }}">Select</a>
-
-                                </div>
-                            </div>
+        <div class="row">
+            <div class="col s12 m7">
+                <div class="card horizontal">
+                    <div class="card-image">
+                        <img src="http://www.pulseheadlines.com/wp-content/uploads/2015/07/airplane-flying-sky.jpg">
+                    </div>
+                    <div class="card-stacked">
+                        <div class="card-content">
+                            <!-- flight option 1 -->
+                            <p>Placeholder Flight</p>
+                            <p>Airline: Delta Airlines</p>
+                            <p>Price: 254.32 USD</p>
+                            <p>Departure Date: 2016-12-15</p>
+                            <p>Return Date: 2016-12-20</p>
+                        </div>
+                        <div class="card-action">
+                            <!-- INFORMATION BELOW WILL NEED TO BE UPDATE JUST AS THE CARD IS!!!!!! -->
+                            <a href="{{ url_for('flights',
+                            trip_id=trip_id,
+                            airline='DE',
+                            destination='FRA',
+                            departure_date='2016-12-25',
+                            return_date='2016-12-31',
+                            cost='254.32') }}">Select this Placeholder Flight</a>
                         </div>
                     </div>
-                    {% endfor %}
                 </div>
             </div>
-        </body>
-        {% endblock %}
+
+            <!-- Actual flights info from Amadeus API -->
+            {% for result in data %}
+            <div class="col s12 m7">
+                <div class="card horizontal">
+                    <div class="card-image">
+                        <img src="https://images.trvl-media.com/media/content/expus/graphics/launch/home/tvly/150324_flights-hero-image_1330x742.jpg">
+                    </div>
+                    <div class="card-stacked">
+                        <div class="card-content">
+                            <!-- flight option 2 -->
+                            <p>
+                                Airline: {{result['airline']}}
+                            </p>
+                            <p>
+                                Price: {{result['price']}}
+                            </p>
+                            <p>
+                                Departure Date: {{result['departure_date']}}
+                            </p>
+                            <p>
+                                Return Date: {{result['return_date']}}
+                            </p>
+                        </div>
+                        <div class="card-action">
+                            <a href="{{ url_for('flights',
+                            trip_id=trip_id,
+                            airline=result['airline'],
+                            destination=result['destination'],
+                            departure_date=result['departure_date'],
+                            return_date=result['return_date'],
+                            cost=result['price']) }}">
+                            Select</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+{% endblock %}

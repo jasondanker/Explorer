@@ -2,30 +2,36 @@
 {% block content %}
 <body class="login">
 
-  <div class= "login-heading">
-    <h2>Login</h2>
-  </div>
+    <div class= "login-heading">
+        <h2>Login</h2>
+    </div>
 
-  {% if error %}
+    {% if error %}
     <p class="error red-text">
-      <strong> Error:</strong>
-      {{ error }}
+        <strong> Error:</strong>
+        {{ error }}
     </p>
-  {% endif %}
+    {% endif %}
 
-  <form class="form1" action="" method="post" name="login">
-  	{{ form.hidden_tag() }}
-    <p>
-    	Email:<br>
-    	{{form.email(size=120)}}<br>
-    </p>
-    <p>
-    	Password:<br>
-    	{{form.insecure_password(size=120)}}<br>
-   	</p>
-  	<p>
-  		<input type="submit" value="Login">
-  	</p>
-  </form>
+    <div class="row">
+        <form class="form1" action="" method="post" name="login">
+            <div class="col s12 m7 form_background">
+                {{ form.hidden_tag() }}
+                <p>
+                    Email:<br>
+                    {{form.email(size=120)}}<br>
+                </p>
+                <p>
+                    Password:<br>
+                    {{form.insecure_password(size=120)}}<br>
+                </p>
+            </div>
+            <div class="col s12 m7">
+                <p>
+                    <input type="submit" value="Login">
+                </p>
+            </div>
+        </form>
+    </div>
 </body>
 {% endblock %}
