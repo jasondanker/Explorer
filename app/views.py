@@ -2,6 +2,7 @@ from app import myapp, models
 from flask import render_template, redirect, request, session, url_for, escape, flash
 from .forms import LoginForm, SignUpForm, CreateTripForm
 import requests, json, re, datetime
+from app import utils
 
 """
 View functions:
@@ -15,429 +16,316 @@ GOOGLE_MAPS_API_KEY = 'AIzaSyD1flhXUIAH853MAQme0Wnak1Hz_ZtgJY4'
 @myapp.route('/')
 @myapp.route('/index')
 def index():
-	return redirect('/home')
+    return redirect('/home')
 
 # login
 @myapp.route('/login', methods=['GET','POST'])
 def login():
-	user = ''
-	error = None
-	# if already logged in, redirect to the trips overview
-	if 'user' in session:
-		user = escape(session['user'])
-		return redirect('/trips')
+    user = ''
+    error = None
+    # if already logged in, redirect to the trips overview
+    if 'user' in session:
+        user = escape(session['user'])
+        return redirect('/trips')
 
-	else: # login
-		form = LoginForm()
-		if form.validate_on_submit():
-			error = None
+    else: # login
+        form = LoginForm()
+        if form.validate_on_submit():
+            error = None
 
-			# user input
-			email = form.email.data
-			pwd = form.insecure_password.data
-			# return user first name only if email, pwd match DB record
-			user = models.validate_user(email, pwd)
+            # user input
+            email = form.email.data
+            pwd = form.insecure_password.data
+            # return user first name only if email, pwd match DB record
+            user = models.validate_user(email, pwd)
 
-			if user is not None:
-				session['user'] = user
-				session['email'] = email
-				return redirect('/trips')
-			else:
-				error = 'Invalid credentials'
-	return render_template('login.html', error=error, form=form)
+            if user is not None:
+                session['user'] = user
+                session['email'] = email
+                return redirect('/trips')
+            else:
+                error = 'Invalid credentials'
+    return render_template('login.html', error=error, form=form)
 
 # sign up
 @myapp.route('/signup', methods=['GET','POST'])
 def signup():
-	error = None
-	# if already logged in, redirect to the trips overview
-	if 'user' in session:
-		user = escape(session['user'])
-		return redirect('/trips')
+    error = None
+    # if already logged in, redirect to the trips overview
+    if 'user' in session:
+        user = escape(session['user'])
+        return redirect('/trips')
 
-	else: # sign up
-		form = SignUpForm()
-		if form.validate_on_submit():
-			error = None
+    else: # sign up
+        form = SignUpForm()
+        if form.validate_on_submit():
+            error = None
 
-			# user input
-			email = form.email.data
-			pwd = form.insecure_password.data
-			fname = form.fname.data
-			lname = form.lname.data
+            # user input
+            email = form.email.data
+            pwd = form.insecure_password.data
+            fname = form.fname.data
+            lname = form.lname.data
 
-			# insert the user into the database if the email address is not already associated with an account
-			if models.retrieve_user_id(email) is None:
-				user = models.signup_user(email, fname, lname, pwd)
-				return redirect('/login')
-			else:
-				error = 'An account with that email address already exits.'
-	return render_template('signup.html', error=error, form=form)
+            # insert the user into the database if the email address is not already associated with an account
+            if models.retrieve_user_id(email) is None:
+                user = models.signup_user(email, fname, lname, pwd)
+                return redirect('/login')
+            else:
+                error = 'An account with that email address already exits.'
+    return render_template('signup.html', error=error, form=form)
 
 # create a trip
 @myapp.route('/createtrip', methods=['GET','POST'])
 def createtrip():
-	error = None
-	form = CreateTripForm()
+    error = request.args.get('error')
+    form = CreateTripForm()
 
-	# user Input
-	trip_name = form.trip_name.data
-	origin = form.origin.data
-	date_outbound = form.date_outbound.data
-	date_inbound = form.date_inbound.data
-	budget = form.budget.data
+    # user Input
+    trip_name = form.trip_name.data
+    origin = form.origin.data
+    date_outbound = form.date_outbound.data
+    date_inbound = form.date_inbound.data
+    budget = form.budget.data
 
-	# store useful info in the session
-	# TODO: I am not sure how to store date object, as storing it
-	# as is produces a date non-serializable error, currently
-	# converting it to string
-	session['origin'] = origin
-	session['date_outbound'] = str(date_outbound)
-	session['date_inbound'] = str(date_inbound)
-	session['budget'] = budget
+    # store useful info in the session
+    session['origin'] = origin
+    session['date_outbound'] = str(date_outbound)
+    session['date_inbound'] = str(date_inbound)
+    session['budget'] = budget
 
-	if form.validate_on_submit():
-		error = None
-		email = session['email']
+    if form.validate_on_submit():
+        error = None
+        email = session['email']
 
-		# insert the trip into the database and bind the user to the trip
-		trip_id = models.create_trip(trip_name, origin, date_outbound, date_inbound, budget)
-		models.bind_user_trip(email, trip_id)
+        # insert the trip into the database and bind the user to the trip
+        trip_id = models.create_trip(trip_name, origin, date_outbound, date_inbound, budget)
+        models.bind_user_trip(email, trip_id)
 
-		# IMPORTANT! Amadeus API does not support trip search with
-		# duration > 15 days, therefore enforcing this artificial restriction
-		# otherwise we can remove this
-		if get_duration(str(date_outbound), str(date_inbound)) > 15:
-			error = 'We currently do not support search of trips with duration longer than 15 days. Please update your search'
-			return render_template('createtrip.html', error=error, form=form)
+        # IMPORTANT! Amadeus API does not support trip search with
+        # duration > 15 days, therefore enforcing this artificial restriction
+        # otherwise we can remove this
+        if utils.get_duration(str(date_outbound), str(date_inbound)) > 15:
+            error = 'We currently do not support search of trips with duration longer than 15 days. Please update your search'
+            return render_template('createtrip.html', error=error, form=form)
 
-		# passes trip_id to the next page via a URL parameter
-		return redirect(url_for('locations', trip_id=trip_id))
+        # passes trip_id to the next page via a URL parameter
+        return redirect(url_for('locations', trip_id=trip_id))
 
-	elif any(field is not None for field in [trip_name, date_outbound, date_inbound, budget]):
-		# only display error message if the user has entered incomplete (but not empty) information
-		error = 'There is an error with your submission. Please check the fields (particularly the dates!)'
+    elif any(field is not None for field in [trip_name, date_outbound, date_inbound, budget]):
+        # only display error message if the user has entered incomplete (but not empty) information
+        error = 'There is an error with your submission. Please check the fields (particularly the dates!)'
 
-	return render_template('createtrip.html', error=error, form=form)
+    return render_template('createtrip.html', error=error, form=form)
 
 # locations
 @myapp.route('/locations', methods=['GET','POST'])
 def locations():
-	error = None
+    error = request.args.get('error')
 
-	# inputs passed from previous pages
-	trip_id = request.args.get('trip_id')
-	date_outbound = session['date_outbound']
-	date_inbound = session['date_inbound']
-	budget = session['budget']
-	origin = session['origin']
+    # inputs passed from previous pages
+    trip_id = request.args.get('trip_id')
+    date_outbound = session['date_outbound']
+    date_inbound = session['date_inbound']
+    budget = session['budget']
+    origin = session['origin']
 
-	# user inputs
-	destination = request.args.get('destination')
+    # user inputs
+    selected_destination = request.args.get('destination')
 
-	# populate the list of potential destinations
-	destinations = []
-	potential_destinations = get_potential_destinations(origin, date_outbound, date_inbound)
-	for destination in potential_destinations:
-		cost = get_min_cost(origin, destination, date_outbound, date_inbound)
-		if cost <= budget:
-			destinations += destination
+    # # populate the list of potential destinations
+    # potential_destinations, costs = utils.get_potential_destinations(origin, budget, date_outbound, date_inbound)
+    #
+    # destinations = []
+    # for i, destination in enumerate(potential_destinations):
+    #     flight_cost = costs[i]
+    #     remaining_budget = float(budget) - flight_cost
+    #     cost = utils.get_min_hotel_cost(destination, date_outbound, date_inbound, remaining_budget) + flight_cost
+    #
+    #     if cost <= budget:
+    #         destinations.append(destination)
 
-	# on user selected input
-	if destination is not None:
-		session['destination'] = destination
-		models.update_trip(trip_id, 'destination', destination)
+    destinations = utils.get_destinations(origin, budget, date_outbound, date_inbound)
 
-		# convert destination into airport
-		from_airport = origin
+    # if there are no possible destinations with the input budget + date combination,
+    # prompt the users to enter different search criteria
+    if len(destinations) == 0:
+        error = 'We didn\'t find anything matching your criteria. Please select a different date or enter a larger budget'
+        print('redirecting to createtrip')
+        return redirect(url_for('createtrip', error=error))
 
-		# find the closest airport based on the destination
-		to_airport = get_nearest_airport(destination)
+    # on user selected input
+    if selected_destination is not None:
+        session['destination'] = selected_destination
+        models.update_trip(trip_id, 'destination', selected_destination)
 
-		# create a placeholder error handling when destination
-		# to airport conversion fails
-		# in the final product this should never happen,
-		# since we will be generating destination based on
-		# flight and hotel search
-		if to_airport is None:
-			error = 'There\'s no nearby airport for the location chosen. Please select a different one'
-			render_template('locations.html', trip_id=trip_id, error=error)
+        # convert destination into airport
+        from_airport = origin
 
-		else:
-			session['from_airport'] = from_airport
-			session['to_airport'] = to_airport
-			return redirect(url_for('flights', trip_id=trip_id))
+        # find the closest airport based on the destination
+        to_airport = utils.get_nearest_airport(selected_destination)
 
-	return render_template('locations.html', trip_id=trip_id, error=error, destinations=destinations)
+        # create a placeholder error handling when destination
+        # to airport conversion fails
+        # in the final product this should never happen,
+        # since we will be generating destination based on
+        # flight and hotel search
+        if to_airport is None:
+            error = 'There\'s no nearby airport for the location chosen. Please select a different one'
+            render_template('locations.html', trip_id=trip_id, error=error)
 
-# TODO: need to implement this funtion using Amadeus inspiration search
-def get_potential_destinations(origin, date_outbound, date_inbound):
-	# return a list of potential locations
-	return []
+        else:
+            session['from_airport'] = from_airport
+            session['to_airport'] = to_airport
+            return redirect(url_for('flights', trip_id=trip_id))
 
-# TODO: need to implement this function using flights & hotels functions below
-def get_min_cost(origin, destination, date_outbound, date_inbound):
-	# given origin and destination, return the minimum cost
-	return 0
+    return render_template('locations.html', trip_id=trip_id, error=error, destinations=destinations)
 
 # flights
 @myapp.route('/flights', methods=['GET','POST'])
 def flights():
-	error = None
+    error = request.args.get('error')
 
-	# inputs passed from previous page
-	trip_id = request.args.get('trip_id')
-	date_outbound = session['date_outbound']
-	date_inbound = session['date_inbound']
-	budget = session['budget']
-	destination = session['destination']
-	from_airport = session['from_airport']
-	to_airport = session['to_airport']
+    # inputs passed from previous page
+    trip_id = request.args.get('trip_id')
+    date_outbound = session['date_outbound']
+    date_inbound = session['date_inbound']
+    budget = session['budget']
+    destination = session['destination']
+    from_airport = session['from_airport']
+    to_airport = session['to_airport']
 
-	# user inputs
-	airline_chosen = request.args.get('airline')
+    # user inputs
+    airline_chosen = request.args.get('airline')
 
-	 # None when the page is first loaded, once user selects a flight, all fields should be populated
-	if airline_chosen is not None:
-		destination_chosen = request.args.get('destination')
-		departure_date_chosen = request.args.get('departure_date')
-		return_date_chosen = request.args.get('return_date')
-		cost = float(request.args.get('cost'))
+     # None when the page is first loaded, once user selects a flight, all fields should be populated
+    if airline_chosen is not None:
+        destination_chosen = request.args.get('destination')
+        departure_date_chosen = request.args.get('departure_date')
+        return_date_chosen = request.args.get('return_date')
+        cost = float(request.args.get('cost'))
 
-	# fields: from_airport, to_airport, departure_date,
-	# duration, n = number of result returned
-	data = get_top_flights(from_airport, to_airport,
-	departure_date = date_outbound,
-	duration = int(get_duration(date_outbound, date_inbound)),
-	budget = int(budget),
-	n = 5)
+    # fields: from_airport, to_airport, departure_date,
+    # duration, n = number of result returned
+    data = utils.get_top_flights(from_airport, to_airport,
+    departure_date = date_outbound,
+    duration = int(utils.get_duration(date_outbound, date_inbound)),
+    budget = int(budget),
+    n = 5)
 
-	# on user selected inputs
-	if airline_chosen is not None:
-		single_trip_cost = '{0:.3f}'.format(cost/2)
+    # on user selected inputs
+    if airline_chosen is not None:
+        single_trip_cost = '{0:.3f}'.format(cost/2)
 
-		outbound_id = models.create_flight(airline_chosen, 'NA',
-		departure_date_chosen, destination_chosen, to_airport,
-		single_trip_cost, trip_id)
+        outbound_id = models.create_flight(airline_chosen, 'NA',
+        departure_date_chosen, destination_chosen, to_airport,
+        single_trip_cost, trip_id)
 
-		inbound_id = models.create_flight(airline_chosen, 'NA',
-		return_date_chosen, to_airport, destination_chosen,
-		single_trip_cost, trip_id)
+        inbound_id = models.create_flight(airline_chosen, 'NA',
+        return_date_chosen, to_airport, destination_chosen,
+        single_trip_cost, trip_id)
 
-		models.update_trip(trip_id, 'flight_outbound', str(outbound_id))
-		models.update_trip(trip_id, 'flight_inbound', str(inbound_id))
+        models.update_trip(trip_id, 'flight_outbound', str(outbound_id))
+        models.update_trip(trip_id, 'flight_inbound', str(inbound_id))
 
-		# update budget with airline cost
-		budget -= cost
-		session['budget_remaining'] = budget
-		models.update_trip(trip_id, 'budget_remaining', '{0:.3f}'.format(budget))
+        # update budget with airline cost
+        budget -= cost
+        session['budget_remaining'] = budget
+        models.update_trip(trip_id, 'budget_remaining', '{0:.3f}'.format(budget))
 
-		return redirect(url_for('hotels', trip_id=trip_id, destination=destination))
+        return redirect(url_for('hotels', trip_id=trip_id, destination=destination))
 
-	# this technically should not happen if we dynamically generate
-	# the result for the locations page
-	# THIS NEEDS TO BE ABLE TO HANDLE A NONE RESPONSE
-	if data is None:
-		try:
-			session.pop('destination', None)
-			error = 'Sorry, We did not find any flights that match your criteria, please pick a new location'
-			return render_template('locations.html', trip_id=trip_id, error=error)
-		except:
-			return render_template('locations.html', trip_id=trip_id)
-		# GIVE THE USER AN OPPORTUNITY TO CHANGE: DATES, BUDGET!!!!!!!
+    # this technically should not happen if we dynamically generate
+    # the result for the locations page
+    # THIS NEEDS TO BE ABLE TO HANDLE A NONE RESPONSE
+    if data is None:
+        try:
+            session.pop('destination', None)
+            error = 'Sorry, We did not find any flights that match your criteria, please pick a new location'
+            return redirect(url_for('locations', trip_id=trip_id, error=error))
+        except:
+            return redirect(url_for('locations', trip_id=trip_id))
+        # GIVE THE USER AN OPPORTUNITY TO CHANGE: DATES, BUDGET!!!!!!!
 
-	return render_template('flights.html', trip_id=trip_id, destination=destination, data=data)
-
-# internal helper function
-# calculate the date difference in days between two date strings
-# returns date_2 - date_1, assuming date 2 >= date 1
-# string format YYYY-MM-DD
-def get_duration(date_1, date_2):
-	 m = re.search('([0-9]+)-([0-9]+)-([0-9]+)', date_1)
-	 d1 = datetime.date(int(m.group(1)), int(m.group(2)), int(m.group(3)))
-	 m = re.search('([0-9]+)-([0-9]+)-([0-9]+)', date_2)
-	 d2 = datetime.date(int(m.group(1)), int(m.group(2)), int(m.group(3)))
-	 return (d2 - d1).days
-
-# internal helper function
-# returns the top n flights given departure and arrival details
-# returns None on error
-# calls Amadeus API
-def get_top_flights(from_airport, to_airport, departure_date, duration, budget, n):
-	url = 'https://api.sandbox.amadeus.com/v1.2/flights/extensive-search'
-
-	params = dict(
-	origin=from_airport,
-    destination=to_airport,
-    departure_date=departure_date,
-	duration=duration,
-	# one-way='true', # default is false
-	max_price=budget, # default is 950
-    apikey=AMADEUS_API_KEY
-	)
-
-	try:
-		resp = requests.get(url=url, params=params)
-		top_n_flights = json.loads(resp.text)['results'][:n]
-		return top_n_flights
-	except:
-		return None
-
-# internal helper function
-# returns the nearest airport for a given location, e.g. 'Paris'
-# returns None if location cannot be converted to lat, long
-# or if there's no airport found near by
-# calls Amadeus API
-def get_nearest_airport(city):
-	location = get_lat_long(city)
-	if location is None:
-		return None
-	else:
-		url = 'https://api.sandbox.amadeus.com/v1.2/airports/nearest-relevant'
-
-		params = dict(
-		latitude=location['lat'],
-		longitude=location['lng'],
-		apikey=AMADEUS_API_KEY
-		)
-
-		try:
-			resp = requests.get(url=url, params=params)
-			# the response also has a field called airport, but through
-			# trial and error the city field seems to work better :)
-			top_airport = json.loads(resp.text)[0]['city']
-			return top_airport
-		except Error:
-			return None
-
-# internal helper function
-# returns a dictionary of (lat, long) for a given location, e.g. 'Paris'
-# returns None on error
-# calls Google Maps API (1000 calls every 24 hours)
-def get_lat_long(city):
-	url = 'https://maps.googleapis.com/maps/api/geocode/json'
-
-	params = dict(
-	address=city,
-	key=GOOGLE_MAPS_API_KEY
-	)
-	try:
-		resp = requests.get(url=url, params=params)
-		location = json.loads(resp.text)['results'][0]['geometry']['location']
-		return location
-	except Error:
-		return None
+    return render_template('flights.html', trip_id=trip_id, destination=destination, data=data, error=error)
 
 # hotels
 @myapp.route('/hotels', methods=['GET','POST'])
 def hotels():
-	error = None
+    error = None
 
-	# inputs passed from previous page
-	trip_id = request.args.get('trip_id')
-	date_outbound = session['date_outbound']
-	date_inbound = session['date_inbound']
-	remaining_budget = session['budget_remaining']
-	destination = session['destination']
+    # inputs passed from previous page
+    trip_id = request.args.get('trip_id')
+    date_outbound = session['date_outbound']
+    date_inbound = session['date_inbound']
+    remaining_budget = session['budget_remaining']
+    destination = session['destination']
 
-	#user input
-	hotel_chosen = request.args.get('hotel')
+    # user input
+    hotel_chosen = request.args.get('hotel')
 
-	if hotel_chosen is not None:
-		#check_in = request.args.get('check_in')
-		check_in = date_outbound
-		#check_out = request.args.get('check_out')
-		check_out = date_inbound
-		location = request.args.get('location')
-		cost = float(request.args.get('cost'))
+    if hotel_chosen is not None:
+        check_in = date_outbound
+        check_out = date_inbound
+        location = request.args.get('location')
+        cost = float(request.args.get('cost'))
 
-	#uses inputs from above
-	data = get_top_hotels(arrival_date=date_outbound,
-	departure_date=date_inbound,
-	destination=destination,
-	budget=int(session['budget_remaining']),
-	n = 5)
-	#print("hi hotel")
+    # uses inputs from above
+    duration = int(utils.get_duration(date_outbound, date_inbound))
+    data = utils.get_top_hotels(arrival_date=date_outbound,
+    departure_date=date_inbound,
+    destination=destination,
+    budget=float(remaining_budget)/duration,
+    n = 5)
 
-	if hotel_chosen is not None:
+    if hotel_chosen is not None:
 
-		hotel = models.create_hotel(hotel_chosen, check_in, check_out, location, cost, trip_id)
+        hotel = models.create_hotel(hotel_chosen, check_in, check_out, location, cost, trip_id)
 
-		models.update_trip(trip_id, 'hotel', str(hotel))
+        models.update_trip(trip_id, 'hotel', str(hotel))
 
-		# re-calculate budget
-		# from yiyi's code
-		remaining_budget -= cost
-		session['budget_remaining'] = remaining_budget
-		models.update_trip(trip_id, 'budget_remaining', '{0:.3f}'.format(remaining_budget))
-		return redirect(url_for('trips', trip_id=trip_id, destination=destination))
+        # re-calculate budget from yiyi's code
+        remaining_budget -= cost
+        session['budget_remaining'] = remaining_budget
+        models.update_trip(trip_id, 'budget_remaining', '{0:.3f}'.format(remaining_budget))
+        return redirect(url_for('trips', trip_id=trip_id, destination=destination))
 
-	if data is None:
-		try:
-			session.pop('from_airport', None)
-			session.pop('to_airport', None)
-			session.pop('budget_remaining', None)
-			error = 'Sorry, We did not find any hotels that match your criteria, please revise your search.'
-			return render_template('flights.html', trip_id=trip_id, error=error)
-		except:
-			return render_template('flights.html', trip_id=trip_id)
-		# GIVE THE USER AN OPPORTUNITY TO CHANGE: DATES, BUDGET!!!!!!!
+    if data is None:
+        try:
+            session.pop('budget_remaining', None)
+            error = 'Sorry, We did not find any hotels that match your criteria, please revise your search.'
+            return redirect(url_for('flights', trip_id=trip_id, error=error))
+        except:
+            return redirect(url_for('flights', trip_id=trip_id))
+        # GIVE THE USER AN OPPORTUNITY TO CHANGE: DATES, BUDGET!!!!!!!
 
-	return render_template('hotels.html', trip_id=trip_id, destination=destination, data=data)
-
-
-# helper function for hotels function
-def get_top_hotels(arrival_date, departure_date, destination, budget, n):
-	location = get_lat_long(city=destination) #uses yiyi's get_lat_long helper function
-	if location is None:
-		return None
-	else:
-		url = 'https://api.sandbox.amadeus.com/v1.2/hotels/search-circle'
-
-		params = dict(
-		latitude=location['lat'],
-		longitude=location['lng'],
-		radius='45',
-		check_in=arrival_date,
-		check_out=departure_date,
-		max_rate=budget,
-    	apikey=AMADEUS_API_KEY
-		)
-
-		try:
-		# show the cheapest hotels result. Hotel name, city and total cost
-			resp = requests.get(url=url, params=params)
-			data = json.loads(resp.text)
-			result = [{'property_name': result['property_name'], 'city': result['address']['city'], 'price': result['total_price']['amount']} for result in data['results'][:n]]
-			return result
-		except:
-			return None
+    return render_template('hotels.html', trip_id=trip_id, destination=destination, data=data)
 
 # Display a user's current trips
 @myapp.route('/trips')
 def trips():
-	email = session['email']
-	trips = models.retrieve_trips(email)
-	return render_template('trips.html', trips=trips)
+    email = session['email']
+    trips = models.retrieve_trips(email)
+    return render_template('trips.html', trips=trips)
 
 # Cancel a trip
 @myapp.route('/cancel_trip/<trip_id>', methods=['GET','POST'])
 def cancel_trip(trip_id):
-	models.deactivate_trip(trip_id)
-	return redirect('/trips')
+    models.deactivate_trip(trip_id)
+    return redirect('/trips')
 
 # homepage
 @myapp.route('/home')
 def home():
-	if 'user' in session:
-		user = escape(session['user'])
-		return redirect('/trips')
-	else:
-		return render_template('home.html')
+    if 'user' in session:
+        user = escape(session['user'])
+        return redirect('/trips')
+    else:
+        return render_template('home.html')
 
 # logout
 @myapp.route('/logout')
 def logout():
-	session.pop('user', None)
-	flash('You were logged out')
-	return redirect(url_for('login'))
+    session.pop('user', None)
+    flash('You were logged out')
+    return redirect(url_for('login'))

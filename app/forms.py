@@ -10,17 +10,17 @@ class LoginForm(Form):
 
 # user sign up form
 class SignUpForm(Form):
-	email = EmailField('username / login email', [validators.required()])
-	insecure_password = PasswordField('password', [validators.required()])
-	fname = StringField('fname', [validators.required()])
-	lname = StringField('lname', [validators.required()])
+    email = EmailField('username / login email', [validators.required()])
+    insecure_password = PasswordField('password', [validators.required()])
+    fname = StringField('fname', [validators.required()])
+    lname = StringField('lname', [validators.required()])
 
 # create trip form
 class CreateTripForm(Form):
-	# Could store this in the DB and pull it in here. This may be a more *real* solution
-	origin_list = [('SFO', 'San Francisco, CA'),('OAK', 'Oakland, CA'),('SJC', 'San Jose, CA'),('JFK','New York, NY'),('EWR','Newark, NJ')]
-	trip_name = StringField('trip_name', [validators.required()])
-	origin = SelectField('origin', [validators.required()], choices=origin_list)
-	date_outbound = DateField('date_outbound', [validators.required()])
-	date_inbound = DateField('date_inbound', [validators.required()])
-	budget = IntegerField('budget', [validators.required()])
+    # Could store this in the DB and pull it in here. This may be a more *real* solution
+    origin_list = [('SFO', 'San Francisco, CA'),('OAK', 'Oakland, CA'),('SJC', 'San Jose, CA'),('NYC','New York, NY')]
+    trip_name = StringField('trip_name', [validators.required()])
+    origin = SelectField('origin', [validators.required()], choices=origin_list)
+    date_outbound = DateField('date_outbound', [validators.required()])
+    date_inbound = DateField('date_inbound', [validators.required()])
+    budget = IntegerField('budget', [validators.required()])
