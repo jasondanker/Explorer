@@ -117,7 +117,7 @@ def update_trip(trip_id, field, value):
         cur = con.cursor()
         cur.execute('PRAGMA foreign_keys = ON')
         sql_command = \
-        "UPDATE trips SET " + field + " = '" + value + "' WHERE trip_id = " + trip_id
+        "UPDATE trips SET " + field + " = '" + value + "' WHERE trip_id = " + str(trip_id)
         cur.execute(sql_command)
         con.commit()
 
