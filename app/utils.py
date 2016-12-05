@@ -34,11 +34,12 @@ def get_destinations(origin, budget, date_outbound, date_inbound):
     for i, destination in enumerate(potential_destinations):
         flight_cost = costs[i]
         remaining_budget = float(budget) - flight_cost
-        cost = get_min_hotel_cost(
-        destination, date_outbound, date_inbound, remaining_budget) + flight_cost
+        hotel_cost = get_min_hotel_cost(destination, date_outbound, date_inbound, remaining_budget)
 
-        if cost <= budget:
-            destinations.append(destination)
+        if hotel_cost is not None:
+            cost = hotel_cost + flight_cost
+            if cost <= budget:
+                destinations.append(destination)
     return destinations
 
 def get_location_name(iata_code):
@@ -180,14 +181,13 @@ def get_potential_destinations(origin, budget, date_outbound, date_inbound, n=10
     )
 
     resp = requests.get(url=url, params=params)
-
     try:
         results = json.loads(resp.text)['results'][:n]
         destinations, costs = [], []
         for result in results:
             destinations.append(get_location_name(result['destination']))
             costs.append(float(result['price']))
-            return destinations, costs
+        return destinations, costs
     except:
         return None, None
 
@@ -229,7 +229,5 @@ def get_min_hotel_cost(destination, date_outbound, date_inbound, remaining_budge
     given the destination and remaining budget, return the minimum hotel cost
     """
     data = get_top_hotels(date_outbound, date_inbound, destination, remaining_budget, n = 1)
-    if data is None:
-        return None
-    else:
-        return float(data[0]['price'])
+    min_cost = None if data is None else float(data[0]['price'])
+    return min_cost

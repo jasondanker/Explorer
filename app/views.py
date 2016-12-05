@@ -98,12 +98,6 @@ def createtrip():
 
     if form.validate_on_submit():
         error = None
-        # email = session['email']
-
-        # insert the trip into the database and bind the user to the trip
-        # trip_id = models.create_trip(trip_name, origin, date_outbound, date_inbound, budget)
-        # models.bind_user_trip(email, trip_id)
-        # session['trip_id'] = trip_id
 
         # IMPORTANT! Amadeus API does not support trip search with
         # duration > 15 days, therefore enforcing this artificial restriction
@@ -136,31 +130,18 @@ def locations():
     # user inputs
     selected_destination = request.args.get('destination')
 
-    # # populate the list of potential destinations
-    # potential_destinations, costs = utils.get_potential_destinations(origin, budget, date_outbound, date_inbound)
-    #
-    # destinations = []
-    # for i, destination in enumerate(potential_destinations):
-    #     flight_cost = costs[i]
-    #     remaining_budget = float(budget) - flight_cost
-    #     cost = utils.get_min_hotel_cost(destination, date_outbound, date_inbound, remaining_budget) + flight_cost
-    #
-    #     if cost <= budget:
-    #         destinations.append(destination)
-
+    # get a list of destinations
     destinations = utils.get_destinations(origin, budget, date_outbound, date_inbound)
 
     # if there are no possible destinations with the input budget + date combination,
     # prompt the users to enter different search criteria
     if len(destinations) == 0:
         error = 'We didn\'t find anything matching your criteria. Please select a different date or enter a larger budget'
-        print('redirecting to createtrip')
         return redirect(url_for('createtrip', error=error))
 
     # on user selected input
     if selected_destination is not None:
         session['destination'] = selected_destination
-        # models.update_trip(trip_id, 'destination', selected_destination)
 
         # convert destination into airport
         from_airport = origin
@@ -190,7 +171,6 @@ def flights():
     error = request.args.get('error')
 
     # inputs passed from previous page
-    # trip_id = request.args.get('trip_id')
     date_outbound = session['date_outbound']
     date_inbound = session['date_inbound']
     budget = session['budget']
@@ -200,13 +180,6 @@ def flights():
 
     # user inputs
     airline_chosen = request.args.get('airline')
-
-     # None when the page is first loaded, once user selects a flight, all fields should be populated
-    if airline_chosen is not None:
-        destination_chosen = request.args.get('destination')
-        departure_date_chosen = request.args.get('departure_date')
-        return_date_chosen = request.args.get('return_date')
-        cost = float(request.args.get('cost'))
 
     # fields: from_airport, to_airport, departure_date,
     # duration, n = number of result returned
@@ -218,33 +191,18 @@ def flights():
 
     # on user selected inputs
     if airline_chosen is not None:
-        single_trip_cost = '{0:.3f}'.format(cost/2)
-        session['airline'] = airline_chosen
-        session['single_trip_cost'] = single_trip_cost
-        session['dest_chosen'] = destination_chosen
-        session['departure_date_chosen'] = departure_date_chosen
-        session['return_date_chosen'] = return_date_chosen
-        # outbound_id = models.create_flight(airline_chosen, 'NA',
-        # departure_date_chosen, destination_chosen, to_airport,
-        # single_trip_cost, trip_id)
-
-        # inbound_id = models.create_flight(airline_chosen, 'NA',
-        # return_date_chosen, to_airport, destination_chosen,
-        # single_trip_cost, trip_id)
-
-        # models.update_trip(trip_id, 'flight_outbound', str(outbound_id))
-        # models.update_trip(trip_id, 'flight_inbound', str(inbound_id))
 
         # update budget with airline cost
+        cost = float(request.args.get('cost'))
         budget -= cost
         session['budget_remaining'] = budget
-        # models.update_trip(trip_id, 'budget_remaining', '{0:.3f}'.format(budget))
+        session['single_trip_cost'] = '{0:.3f}'.format(cost/2)
+        session['airline'] = airline_chosen
 
         return redirect(url_for('hotels', destination=destination))
 
     # this technically should not happen if we dynamically generate
     # the result for the locations page
-    # THIS NEEDS TO BE ABLE TO HANDLE A NONE RESPONSE
     if data is None:
         try:
             session.pop('destination', None)
@@ -252,7 +210,6 @@ def flights():
             return redirect(url_for('locations', error=error))
         except:
             return redirect(url_for('locations'))
-        # GIVE THE USER AN OPPORTUNITY TO CHANGE: DATES, BUDGET!!!!!!!
 
     return render_template('flights.html', destination=destination, data=data, error=error)
 
@@ -261,20 +218,22 @@ def flights():
 def hotels():
     error = None
 
-    # inputs passed from previous page
-    # trip_id = request.args.get('trip_id')
+    # date info
     date_outbound = session['date_outbound']
     date_inbound = session['date_inbound']
+
+    # budget and remaining budget info
+    budget = session['budget']
     remaining_budget = session['budget_remaining']
+    single_trip_cost = session['single_trip_cost'] # cost of a single flight
+
+    # location info
+    trip_name = session['trip_name']
+    origin = session['origin']
     destination = session['destination']
     airline = session['airline']
-    departure_date_chosen = session['departure_date_chosen']
-    trip_name = session['trip_name']
-    budget = session['budget']
-    origin = session['origin']
     to_airport = session['to_airport']
-    single_trip_cost = session['single_trip_cost']
-    return_date_chosen =  session['return_date_chosen']
+
     email = session['email']
 
     # user input
@@ -285,6 +244,7 @@ def hotels():
         check_out = date_inbound
         location = request.args.get('location')
         cost = float(request.args.get('cost'))
+
     # uses inputs from above
     duration = int(utils.get_duration(date_outbound, date_inbound))
     data = utils.get_top_hotels(arrival_date=date_outbound,
@@ -294,29 +254,33 @@ def hotels():
     n = 5)
 
     if hotel_chosen is not None:
+        # DB updates
+        # update trip db and link to user ID
         trip_id = models.create_trip(trip_name, origin, date_outbound, date_inbound, budget)
         models.bind_user_trip(email, trip_id)
-
         models.update_trip(trip_id, 'destination', destination)
 
+        # update flight db and flight info of the corresponding trip
         outbound_id = models.create_flight(airline, 'NA',
-        departure_date_chosen, destination, to_airport,
+        date_outbound, destination, to_airport,
         single_trip_cost, trip_id)
 
         inbound_id = models.create_flight(airline, 'NA',
-        return_date_chosen, to_airport, destination,
+        date_inbound, to_airport, destination,
         single_trip_cost, trip_id)
 
         models.update_trip(trip_id, 'flight_outbound', str(outbound_id))
         models.update_trip(trip_id, 'flight_inbound', str(inbound_id))
 
+        # update hotel db and hotel info of the corresponding trip
         hotel = models.create_hotel(hotel_chosen, check_in, check_out, location, cost, trip_id)
         models.update_trip(trip_id, 'hotel', str(hotel))
 
-        # re-calculate budget from yiyi's code
+        # update budget info of the corresponding trip
         remaining_budget -= cost
         session['budget_remaining'] = remaining_budget
         models.update_trip(trip_id, 'budget_remaining', '{0:.3f}'.format(remaining_budget))
+
         return redirect(url_for('trips', trip_id=trip_id, destination=destination))
 
     if data is None:
@@ -326,7 +290,6 @@ def hotels():
             return redirect(url_for('flights', error=error))
         except:
             return redirect(url_for('flights'))
-        # GIVE THE USER AN OPPORTUNITY TO CHANGE: DATES, BUDGET!!!!!!!
 
     return render_template('hotels.html', destination=destination, data=data)
 

@@ -29,7 +29,7 @@
         <h2>Pick a Flight</h2>
 
         {% if error %}
-        <p class="error red-text">
+        <p class="error white-text">
             <strong> Error:</strong>
             {{ error }}
         </p>
@@ -79,7 +79,7 @@
                                 Airline: {{result['airline']}}
                             </p>
                             <p>
-                                Price: {{result['price']}}
+                                Price: {{result['price']}} USD
                             </p>
                             <p>
                                 Departure Date: {{result['departure_date']}}
