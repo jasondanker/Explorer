@@ -179,7 +179,6 @@ def get_potential_destinations(origin, budget, date_outbound, date_inbound, n=10
     max_price=budget,
     apikey=AMADEUS_API_KEY
     )
-
     resp = requests.get(url=url, params=params)
     try:
         results = json.loads(resp.text)['results'][:n]
@@ -208,7 +207,7 @@ def get_top_hotels(arrival_date, departure_date, destination, budget, n):
         params = dict(
         latitude=location['lat'],
         longitude=location['lng'],
-        radius='45',
+        radius='10',
         check_in=arrival_date,
         check_out=departure_date,
         max_rate=budget,

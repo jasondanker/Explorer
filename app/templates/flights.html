@@ -37,14 +37,13 @@
 
 
         <div class="row">
-            <div class="col s12 m7">
+            <!-- <div class="col s12 m7">
                 <div class="card horizontal">
                     <div class="card-image">
                         <img src="http://www.pulseheadlines.com/wp-content/uploads/2015/07/airplane-flying-sky.jpg">
                     </div>
                     <div class="card-stacked">
                         <div class="card-content">
-                            <!-- flight option 1 -->
                             <p>Placeholder Flight</p>
                             <p>Airline: Delta Airlines</p>
                             <p>Price: 254.32 USD</p>
@@ -52,7 +51,6 @@
                             <p>Return Date: 2016-12-20</p>
                         </div>
                         <div class="card-action">
-                            <!-- INFORMATION BELOW WILL NEED TO BE UPDATE JUST AS THE CARD IS!!!!!! -->
                             <a href="{{ url_for('flights',
                             trip_id=trip_id,
                             airline='DE',
@@ -63,7 +61,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> -->
 
             <!-- Actual flights info from Amadeus API -->
             {% for result in data %}

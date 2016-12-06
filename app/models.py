@@ -42,14 +42,14 @@ def create_trip(trip_name, origin, date_outbound, date_inbound, budget):
         return trip_id # Used to join the user to the trip
 
 # Create Flight
-def create_flight(airline, flight_num, flight_date, origin, destination, cost, trip_id):
+def create_flight(airline, date_outbound, date_inbound, origin, destination, cost, trip_id):
     with sql.connect('app.db') as con:
         con.row_factory = sql.Row
         cur = con.cursor()
         cur.execute('PRAGMA foreign_keys = ON')
         sql_command = \
-        'INSERT INTO flights (airline, flight_number, flight_date, origin, destination, cost, trip_id, active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
-        cur.execute(sql_command, (airline, flight_num, flight_date, origin, destination, cost, trip_id, 'TRUE'))
+        'INSERT INTO flights (airline, date_outbound, date_inbound, origin, destination, cost, trip_id, active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+        cur.execute(sql_command, (airline, date_outbound, date_inbound, origin, destination, cost, trip_id, 'TRUE'))
         con.commit()
         flight_id = cur.lastrowid # Used to join the user to the trip
         return flight_id # Used to join the user to the trip
@@ -86,12 +86,14 @@ def retrieve_trips(email):
         cur = con.cursor()
         cur.execute('PRAGMA foreign_keys = ON')
         sql_command = \
-        "SELECT t.trip_id, t.trip_name, t.origin, t.date_outbound, t.date_inbound, t.budget, t.budget_remaining, \
-        t.destination, t.flight_outbound, t.flight_inbound, t.hotel \
-        FROM trips t JOIN user_trips_junct ut JOIN users u \
+        "SELECT t.trip_id, t.trip_name, t.origin, f.date_outbound, f.date_inbound, t.budget, t.budget_remaining, \
+        t.destination, f.airline, h.name \
+        FROM trips t JOIN user_trips_junct ut JOIN users u JOIN hotels h JOIN flights f \
         WHERE u.email = '" + email + "' AND \
         u.user_id = ut.user_id AND \
         ut.trip_id = t.trip_id AND \
+        h.trip_id = t.trip_id AND \
+        f.trip_id = t.trip_id AND \
         t.active = 'TRUE'"
         result = cur.execute(sql_command).fetchall()
     return result
