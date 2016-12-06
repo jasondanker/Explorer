@@ -26,29 +26,27 @@
             <thead>
                 <tr>
                     <th>Trip Name</th>
-                    <th>Origin</th>
-                    <th>Outbound Date</th>
-                    <th>Inbound Date</th>
                     <th>Budget</th>
                     <th>Budget Remaining</th>
+                    <th>Origin</th>
                     <th>Destination</th>
+                    <th>Outbound Date</th>
                     <th>Outbound Flight</th>
-                    <th>Inbound Flight</th>
+                    <th>Airline</th>
                     <th>Hotel</th>
                 </tr>
             </thead>
             {% for trip in trips %}
             <tr>
                 <td>{{ trip['trip_name'] }}</td>
-                <td>{{ trip['origin'] }}</td>
-                <td>{{ trip['date_outbound'] }}</td>
-                <td>{{ trip['date_inbound'] }}</td>
                 <td>{{ trip['budget'] }}</td>
                 <td>{{ trip['budget_remaining'] }}</td>
+                <td>{{ trip['origin'] }}</td>
                 <td>{{ trip['destination'] }}</td>
-                <td>{{ trip['flight_outbound'] }}</td>
-                <td>{{ trip['flight_inbound'] }}</td>
-                <td>{{ trip['hotel'] }}</td>
+                <td>{{ trip['date_outbound'] }}</td>
+                <td>{{ trip['date_inbound'] }}</td>
+                <td>{{ trip['airline'] }}</td>
+                <td>{{ trip['name'] }}</td>
                 <td><a href="{{ url_for('cancel_trip', trip_id=trip['trip_id']) }}">Cancel Trip</a></td>
             </tr>
             {% endfor %}

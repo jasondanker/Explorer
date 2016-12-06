@@ -196,7 +196,7 @@ def flights():
         cost = float(request.args.get('cost'))
         budget -= cost
         session['budget_remaining'] = budget
-        session['single_trip_cost'] = '{0:.3f}'.format(cost/2)
+        session['flight_cost'] = '{0:.3f}'.format(cost)
         session['airline'] = airline_chosen
 
         return redirect(url_for('hotels', destination=destination))
@@ -225,7 +225,7 @@ def hotels():
     # budget and remaining budget info
     budget = session['budget']
     remaining_budget = session['budget_remaining']
-    single_trip_cost = session['single_trip_cost'] # cost of a single flight
+    flight_cost = session['flight_cost'] # cost of a single flight
 
     # location info
     trip_name = session['trip_name']
@@ -261,16 +261,11 @@ def hotels():
         models.update_trip(trip_id, 'destination', destination)
 
         # update flight db and flight info of the corresponding trip
-        outbound_id = models.create_flight(airline, 'NA',
-        date_outbound, destination, to_airport,
-        single_trip_cost, trip_id)
+        flight_id = models.create_flight(airline,
+        date_outbound, date_inbound, destination, to_airport, 
+        flight_cost, trip_id)
 
-        inbound_id = models.create_flight(airline, 'NA',
-        date_inbound, to_airport, destination,
-        single_trip_cost, trip_id)
-
-        models.update_trip(trip_id, 'flight_outbound', str(outbound_id))
-        models.update_trip(trip_id, 'flight_inbound', str(inbound_id))
+        models.update_trip(trip_id, 'flight_id', str(flight_id))
 
         # update hotel db and hotel info of the corresponding trip
         hotel = models.create_hotel(hotel_chosen, check_in, check_out, location, cost, trip_id)
@@ -281,7 +276,19 @@ def hotels():
         session['budget_remaining'] = remaining_budget
         models.update_trip(trip_id, 'budget_remaining', '{0:.3f}'.format(remaining_budget))
 
-        return redirect(url_for('trips', trip_id=trip_id, destination=destination))
+        # pop all sesssion data
+        session.pop('date_outbound', None)
+        session.pop('date_inbound', None)
+        session.pop('budget', None)
+        session.pop('budget_remaining', None)
+        session.pop('flight_cost', None)
+        session.pop('trip_name', None)
+        session.pop('origin', None)
+        session.pop('destination', None)
+        session.pop('airline', None)
+        session.pop('to_airport', None)
+
+        return redirect(url_for('trips'))
 
     if data is None:
         try:

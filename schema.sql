@@ -16,8 +16,7 @@ create table trips (
 	budget integer not null,
 	date_outbound date not null,
 	date_inbound date not null,
-	flight_outbound integer,
-	flight_inbound integer,
+	flight_id integer,
 	hotel integer,
 	destination text,
 	budget_remaining integer not null, -- Calculated
@@ -28,8 +27,8 @@ drop table if exists flights;
 create table flights (
 	flight_id integer primary key,
 	airline text not null,
-	flight_number text not null,
-	flight_date date not null,
+	date_outbound date not null,
+	date_inbound date not null,
 	origin text not null,
 	destination text not null,
 	cost integer not null,
