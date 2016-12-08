@@ -4,7 +4,7 @@ create table users (
 	first_name text not null,
 	last_name text not null,
 	email text not null unique,
-	insecure_password text not null,
+	pw_hash text not null,
 	active boolean not null
 );
 

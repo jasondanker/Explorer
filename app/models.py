@@ -1,4 +1,5 @@
 import sqlite3 as sql
+from werkzeug.security import generate_password_hash, check_password_hash
 
 """
 Database functions:
@@ -11,21 +12,22 @@ def validate_user(email, pwd):
     if result is None: return None
     else:
         result = result[0]
-        if result['insecure_password'] == pwd:
+        if check_password_hash(result['pw_hash'], pwd):
             return result['first_name']
         else: return None
 
 # Sign Up
 def signup_user(email, fname, lname, pwd):
     with sql.connect("app.db") as con:
+        pw_hash = generate_password_hash(pwd)
         con.row_factory = sql.Row
         cur = con.cursor()
         cur.execute('PRAGMA foreign_keys = ON')
 
         sql_command = \
-        "INSERT INTO users (email, first_name, last_name, insecure_password, active) VALUES (?, ?, ?, ?, ?)"
+        "INSERT INTO users (email, first_name, last_name, pw_hash, active) VALUES (?, ?, ?, ?, ?)"
 
-        cur.execute(sql_command, (email, fname, lname, pwd, 'TRUE'))
+        cur.execute(sql_command, (email, fname, lname, pw_hash, 'TRUE'))
         con.commit()
 
 # Create Trip
@@ -135,7 +137,7 @@ def retrieve_user_info(email):
         cur.execute('PRAGMA foreign_keys = ON')
 
         sql_command = \
-        "SELECT first_name, insecure_password \
+        "SELECT first_name, pw_hash \
         FROM users WHERE email = \'" + email + "\'"
 
         result = cur.execute(sql_command).fetchall()
