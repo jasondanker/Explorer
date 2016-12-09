@@ -17,7 +17,8 @@ class SignUpForm(Form):
 
 # create trip form
 class CreateTripForm(Form):
-    # Could store this in the DB and pull it in here. This may be a more *real* solution
+    # Could store this in the DB and pull it in here. This would be a more *real* solution but, barring
+    # access to a substantial list of IATA codes, isn't necessary at the momemnt.
     origin_list = [('SFO', 'San Francisco, CA'),('OAK', 'Oakland, CA'),('SJC', 'San Jose, CA'),('NYC','New York, NY')]
     trip_name = StringField('trip_name', [validators.required()])
     origin = SelectField('origin', [validators.required()], choices=origin_list)

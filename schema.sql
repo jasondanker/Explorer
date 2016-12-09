@@ -44,7 +44,7 @@ create table hotels (
 	check_in date not null,
 	check_out date not null,
 	location text not null, -- Likely to be expanded
-	rating integer,
+	rating integer, -- Not used at the moment but retained for future integration
 	cost integer not null,
 	trip_id integer,
 	active boolean not null,

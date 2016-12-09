@@ -6,32 +6,44 @@ Database functions:
 * Handle information retrieval and database updates
 """
 
-# Login
 def validate_user(email, pwd):
+    """
+    Validates provided login information
+    Return the user's first name if True
+    Return None if False
+    """
     result = retrieve_user_info(email)
+    # If email address is not found, return None
     if result is None: return None
     else:
         result = result[0]
+        # Checks the entered password against the stored hash and passes first_name if successful
         if check_password_hash(result['pw_hash'], pwd):
             return result['first_name']
+        # Returns None if not
         else: return None
 
-# Sign Up
 def signup_user(email, fname, lname, pwd):
+    """
+    Creates a new user in the db
+    Salts and hashes the password
+    """
     with sql.connect("app.db") as con:
+        # Salts and hashes the users password
         pw_hash = generate_password_hash(pwd)
         con.row_factory = sql.Row
         cur = con.cursor()
         cur.execute('PRAGMA foreign_keys = ON')
-
         sql_command = \
         "INSERT INTO users (email, first_name, last_name, pw_hash, active) VALUES (?, ?, ?, ?, ?)"
-
         cur.execute(sql_command, (email, fname, lname, pw_hash, 'TRUE'))
         con.commit()
 
-# Create Trip
 def create_trip(trip_name, origin, date_outbound, date_inbound, budget):
+    """
+    Creates a trip entry in the db
+    create_trip(trip_name, origin, date_outbound, date_inbound, budget)
+    """
     with sql.connect('app.db') as con:
         con.row_factory = sql.Row
         cur = con.cursor()
@@ -43,8 +55,11 @@ def create_trip(trip_name, origin, date_outbound, date_inbound, budget):
         trip_id = cur.lastrowid # Used to join the user to the trip
         return trip_id # Used to join the user to the trip
 
-# Create Flight
 def create_flight(airline, date_outbound, date_inbound, origin, destination, cost, trip_id):
+    """
+    Creates a flight entry in the db
+    create_flight(airline, date_outbound, date_inbound, origin, destination, cost, trip_id)
+    """
     with sql.connect('app.db') as con:
         con.row_factory = sql.Row
         cur = con.cursor()
@@ -57,6 +72,10 @@ def create_flight(airline, date_outbound, date_inbound, origin, destination, cos
         return flight_id # Used to join the user to the trip
 
 def create_hotel(name, check_in, check_out, location, cost, trip_id):
+    """
+    Creates a hotel entry in the db
+    create_hotel(name, check_in, check_out, location, cost, trip_id)
+    """
     with sql.connect('app.db') as con:
         con.row_factory = sql.Row
         cur = con.cursor()
@@ -68,8 +87,10 @@ def create_hotel(name, check_in, check_out, location, cost, trip_id):
         flight_id = cur.lastrowid # Used to join the user to the trip
         return flight_id # Used to join the user to the trip
 
-# bind user with trip information
 def bind_user_trip(email, trip_id):
+    """
+    Bind a user to a particular trip
+    """
     user_id = retrieve_user_id(email)[0]['user_id']
     with sql.connect("app.db") as con:
         con.row_factory = sql.Row
@@ -80,9 +101,10 @@ def bind_user_trip(email, trip_id):
         cur.execute(sql_command, (user_id, trip_id, 'TRUE'))
         con.commit()
 
-# Display Trips
-# Retrieve all trips for a user by their email address
 def retrieve_trips(email):
+    """
+    Retrieve all trips for a user based on their email address
+    """
     with sql.connect("app.db") as con:
         con.row_factory = sql.Row
         cur = con.cursor()
@@ -100,8 +122,10 @@ def retrieve_trips(email):
         result = cur.execute(sql_command).fetchall()
     return result
 
-# Deactivate trip
 def deactivate_trip(trip_id):
+    """
+    Set a particular trip_id to inactive
+    """
     with sql.connect("app.db") as con:
         con.row_factory = sql.Row
         cur = con.cursor()
@@ -114,8 +138,11 @@ def deactivate_trip(trip_id):
         cur.execute(update_junct)
         con.commit()
 
-# Update a trip with new information
 def update_trip(trip_id, field, value):
+    """
+    update_trip(trip_id, field, value)
+    Update a specified field in a trip with a new value
+    """
     with sql.connect("app.db") as con:
         con.row_factory = sql.Row
         cur = con.cursor()
@@ -127,10 +154,12 @@ def update_trip(trip_id, field, value):
 
 # ---------- Helper Functions ----------
 
-# retrieve password and first name of a user given their email address
 def retrieve_user_info(email):
-    # SQL statement to query database goes here
-    # Returns None if no match is found
+    """
+    Given an email, determine if the user is in the db
+    Return their information if found
+    Return None if no match is found
+    """
     with sql.connect("app.db") as con:
         con.row_factory = sql.Row
         cur = con.cursor()
@@ -145,10 +174,12 @@ def retrieve_user_info(email):
         return None
     else: return result
 
-# retrieve ID of a user given their email address
 def retrieve_user_id(email):
-    # SQL statement to query database goes here
-    # Returns None if no match is found
+    """
+    Given an email, determine if the user is in the db
+    Return their user_id if found
+    Return None if not found
+    """
     with sql.connect("app.db") as con:
         con.row_factory = sql.Row
         cur = con.cursor()

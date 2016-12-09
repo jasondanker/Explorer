@@ -39,6 +39,7 @@ def login():
             # return user first name only if email, pwd match DB record
             user = models.validate_user(email, pwd)
 
+            # Send logged in users to the trips page
             if user is not None:
                 session['user'] = user
                 session['email'] = email
