@@ -4,13 +4,12 @@
 <!-- Create your trip -->
 <body class="createtrip">
     <script src="/static/createtrip.js"></script>
-    <!-- Need to figure out what to do with home link -->
-    <!-- <div class="homelink"> -->
-    <!-- <a href="{{ url_for('index') }}">Home</a> -->
-    <!-- </div>  -->
     <section>
         <div id="logout">
+            <a class="white-text" href="{{ url_for('home') }}"> Home </a>
+            &nbsp;&nbsp;&nbsp;
             <a class="white-text" href="{{ url_for('logout') }}"> Logout</a>
+        </div>
         </div>
     </section>
 
@@ -37,6 +36,7 @@
                 </p>
                 <p>
                     Departure Date (format: yyyy-mm-dd):<br>
+                    Due to current system limitations, please only search with dates in the near future. <br>
                     {{form.date_outbound(size=120)}}<br>
                 </p>
                 <p>

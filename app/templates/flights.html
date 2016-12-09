@@ -1,25 +1,22 @@
 {% extends "base.html" %}
 
-{% block navcontent %}
-<a href="{{ url_for('home') }}" class="brand-logo center">Explorer</a>
-<ul class="right">
-    <li><a href="#">Logout</a></li>
-</ul>
-{% endblock %}
-
 <!-- this page is to find and select flights for your trip! -->
-
 {% block content %}
 <body class="search">
-    <div class="container">
+    <section>
+        <div id="logout">
+            <a class="white-text" href="{{ url_for('home') }}"> Home </a>
+            &nbsp;&nbsp;&nbsp;
+            <a class="white-text" href="{{ url_for('logout') }}"> Logout</a>
+        </div>
+    </section>
 
+    <div class="container">
         <section>
             <nav class="transparent z-depth-0">
                 <div class="nav-wrapper">
                     <div class="col s12">
-                        <a href="{{ url_for('locations', trip_id=trip_id)}} " class="breadcrumb">
-                            Location
-                        </a>
+                        <a href="" class="breadcrumb">Location</a>
                         <a href="" class="breadcrumb">Flights</a>
                     </div>
                 </div>
@@ -37,32 +34,6 @@
 
 
         <div class="row">
-            <!-- <div class="col s12 m7">
-                <div class="card horizontal">
-                    <div class="card-image">
-                        <img src="http://www.pulseheadlines.com/wp-content/uploads/2015/07/airplane-flying-sky.jpg">
-                    </div>
-                    <div class="card-stacked">
-                        <div class="card-content">
-                            <p>Placeholder Flight</p>
-                            <p>Airline: Delta Airlines</p>
-                            <p>Price: 254.32 USD</p>
-                            <p>Departure Date: 2016-12-15</p>
-                            <p>Return Date: 2016-12-20</p>
-                        </div>
-                        <div class="card-action">
-                            <a href="{{ url_for('flights',
-                            trip_id=trip_id,
-                            airline='DE',
-                            destination='FRA',
-                            departure_date='2016-12-25',
-                            return_date='2016-12-31',
-                            cost='254.32') }}">Select this Placeholder Flight</a>
-                        </div>
-                    </div>
-                </div>
-            </div> -->
-
             <!-- Actual flights info from Amadeus API -->
             {% for result in data %}
             <div class="col s12 m7">
